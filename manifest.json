@@ -2,7 +2,7 @@
   "name": "Ventas Lili - Sistema POS",
   "short_name": "Ventas Lili",
   "description": "Sistema de gestión de ventas, catálogo y créditos.",
-  "start_url": "./app.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F3F4F6",
   "theme_color": "#5B4BFF",
