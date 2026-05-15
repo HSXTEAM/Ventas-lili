@@ -342,12 +342,20 @@
             .desktop-nav { display: none; }
             .mobile-nav { 
                 display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; right: 0; 
-                background: rgba(255,255,255,0.95); border-top: 1px solid var(--border-solid); 
+                background: var(--primary); /* FONDO MORADO APLICADO */
+                border-top: none; 
                 padding: 0.4rem 0; z-index: 9000; padding-bottom: calc(0.4rem + env(safe-area-inset-bottom)); 
+                box-shadow: 0 -4px 15px rgba(91, 75, 255, 0.4);
             }
-            .mobile-tab-btn { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.65rem; font-weight: 600; color: var(--text-light); padding: 0.4rem; width: 100%; }
-            .mobile-tab-btn svg { width: 20px; height: 20px; }
-            .mobile-tab-btn.active { color: var(--primary); }
+            .mobile-tab-btn { 
+                background: transparent; border: none; display: flex; flex-direction: column; align-items: center; 
+                gap: 2px; font-size: 0.65rem; font-weight: 600; 
+                color: rgba(255, 255, 255, 0.6); /* LETRAS BLANCAS SEMITRANSPARENTES PARA INACTIVOS */
+                padding: 0.4rem; width: 100%; transition: all 0.2s; 
+            }
+            .mobile-tab-btn svg { width: 20px; height: 20px; transition: transform 0.2s; }
+            .mobile-tab-btn.active { color: #FFFFFF; } /* LETRAS BLANCAS BRILLANTES PARA EL ACTIVO */
+            .mobile-tab-btn.active svg { transform: scale(1.15); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
             
             /* Inputs y Botones Grales */
             .form-control { font-size: 0.85rem !important; padding: 0.5rem 0.75rem !important; min-height: 38px !important; border-radius: 8px; }
