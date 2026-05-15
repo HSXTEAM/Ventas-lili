@@ -1,6 +1,7 @@
-const CACHE_NAME = 'ventas-lili-v1';
+const CACHE_NAME = 'ventas-lili-v2';
 const ASSETS_TO_CACHE = [
-  './app.html',
+  './',
+  './index.html',
   './manifest.json'
 ];
 
