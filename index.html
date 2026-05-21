@@ -565,6 +565,18 @@
         </div>
     </div>
 
+    <!-- Modal Confirmar Eliminación -->
+    <div id="modalConfirmarEliminar" class="modal-overlay">
+        <div class="modal">
+            <h3 style="color: var(--danger); margin-bottom: 1rem;">⚠️ Eliminar Cliente</h3>
+            <p id="textoConfirmacionEliminar" style="margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="cerrarModalConfirmarEliminar()">Cancelar</button>
+                <button type="button" class="btn-premium" style="flex: 2; background: var(--danger); box-shadow: 0 16px 32px -4px rgba(239, 68, 68, 0.25);" onclick="ejecutarEliminacionCliente()">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Historial de Abonos -->
     <div id="modalHistorialAbonos" class="modal-overlay">
         <div class="modal">
@@ -812,10 +824,24 @@
             renderizarCreditos();
         }
 
-        async function eliminarCliente(nombre) {
-            if (!confirm(`¿Estás seguro de eliminar a ${nombre}?\n\n¡ADVERTENCIA! Se borrará TODO su historial de cargos y abonos de forma permanente y no se podrá recuperar.`)) {
-                return;
-            }
+        let clienteAEliminar = null;
+
+        function eliminarCliente(nombre) {
+            clienteAEliminar = nombre;
+            document.getElementById('textoConfirmacionEliminar').innerHTML = `¿Estás seguro de eliminar a <strong>${nombre}</strong>?<br><br>¡ADVERTENCIA! Se borrará TODO su historial de cargos y abonos de forma permanente y no se podrá recuperar.`;
+            document.getElementById('modalConfirmarEliminar').classList.add('active');
+        }
+
+        function cerrarModalConfirmarEliminar() {
+            document.getElementById('modalConfirmarEliminar').classList.remove('active');
+            clienteAEliminar = null;
+        }
+
+        async function ejecutarEliminacionCliente() {
+            if (!clienteAEliminar) return;
+
+            const nombre = clienteAEliminar;
+            cerrarModalConfirmarEliminar();
 
             mostrarMensaje('Eliminando cliente...', 'warning');
 
