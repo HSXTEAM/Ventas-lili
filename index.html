@@ -209,22 +209,6 @@
         .btn-icon-danger:hover { background: #FEE2E2; }
 
         /* =========================================
-           BUSCADOR PERSONALIZADO (DROPDOWN)
-           ========================================= */
-        .custom-select-wrapper { position: relative; }
-        .dropdown-list {
-            position: absolute; top: calc(100% + 4px); left: 0; right: 0; 
-            background: var(--surface-solid); border: 1px solid var(--border-solid);
-            border-radius: 12px; max-height: 250px; overflow-y: auto; 
-            z-index: 9999; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-        }
-        .dropdown-item { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-solid); cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.85rem; }
-        .dropdown-item:last-child { border-bottom: none; }
-        .dropdown-item:hover { background-color: #F9FAFB; }
-        .dropdown-item-title { font-weight: 500; color: var(--text-main); font-size: 0.95rem; }
-        .dropdown-item-avatar { width: 32px; height: 32px; border-radius: 50%; background: #EEF2FF; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0; }
-
-        /* =========================================
            TABLAS MODERNAS Y CRÉDITOS
            ========================================= */
         .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; }
@@ -319,18 +303,16 @@
             .btn-outline { font-size: 0.9rem !important; padding: 0.5rem 1rem !important; min-height: 44px !important; border-radius: 10px; }
             .pos-section-title { font-size: 1.05rem; margin-bottom: 0.5rem; }
             
-            /* Título y Drops */
-            .dropdown-list { max-height: 160px; border-radius: 8px; }
-            .dropdown-item { padding: 0.5rem; gap: 0.5rem; }
-            .dropdown-item-avatar { width: 24px; height: 24px; }
-            .dropdown-item-avatar svg { width: 12px; height: 12px; }
-            .dropdown-item-title { font-size: 0.85rem; }
-
             /* Tablas y Listas */
             .credit-card { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 10px; }
             .credit-info h4 { font-size: 0.95rem; }
             .credit-info p { font-size: 1.1rem; margin: 0.15rem 0; }
-            .table-responsive { font-size: 0.85rem; }
+            
+            /* Optimización de tabla de reportes para móviles */
+            .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .modern-table th { padding: 0.5rem 0.25rem; font-size: 0.65rem; letter-spacing: 0; }
+            .modern-table td { padding: 0.6rem 0.25rem; font-size: 0.75rem; }
+            .modern-table td:nth-child(2) { max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             
             .report-summary-grid { grid-template-columns: 1fr; gap: 0.75rem; }
             .report-card-metric { padding: 0.75rem; }
@@ -421,8 +403,8 @@
                     </button>
                 </div>
 
-                <div class="form-row" style="margin-bottom: 1.5rem; flex-wrap: wrap;">
-                    <div class="form-group">
+                <div class="form-row" style="margin-bottom: 1.5rem; flex-wrap: wrap; align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; min-width: 140px;">
                         <label>Periodo</label>
                         <select id="filtroPeriodoReporte" class="form-control" onchange="cambiarPeriodoReporte()">
                             <option value="hoy">Hoy</option>
@@ -432,13 +414,18 @@
                             <option value="personalizado">Entre 2 fechas</option>
                         </select>
                     </div>
-                    <div class="form-group RangoPersonalizado" style="display: none;">
+                    <div class="form-group RangoPersonalizado" style="display: none; flex: 1; min-width: 140px;">
                         <label>Desde</label>
-                        <input type="date" id="fechaInicioReporte" class="form-control" onchange="renderizarReporteGeneral()">
+                        <input type="date" id="fechaInicioReporte" class="form-control">
                     </div>
-                    <div class="form-group RangoPersonalizado" style="display: none;">
+                    <div class="form-group RangoPersonalizado" style="display: none; flex: 1; min-width: 140px;">
                         <label>Hasta</label>
-                        <input type="date" id="fechaFinReporte" class="form-control" onchange="renderizarReporteGeneral()">
+                        <input type="date" id="fechaFinReporte" class="form-control">
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 150px;">
+                        <button type="button" class="btn-premium" onclick="generarReporteSupabase()" style="height: 48px; border-radius: 8px;">
+                            Generar Reporte
+                        </button>
                     </div>
                 </div>
 
@@ -446,7 +433,7 @@
                 <div id="areaReportePDF" style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-solid);">
                     <div style="text-align: center; margin-bottom: 1.5rem;">
                         <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 1.25rem;">Reporte de Ventas y Cobros</h3>
-                        <p id="rangoFechaTexto" class="text-muted" style="font-size: 0.9rem;">Periodo seleccionado</p>
+                        <p id="rangoFechaTexto" class="text-muted" style="font-size: 0.9rem;">Haz clic en "Generar Reporte" para cargar datos</p>
                     </div>
 
                     <div class="report-summary-grid">
@@ -476,7 +463,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tablaReporteDias">
-                                <!-- Renderizado por JS -->
+                                <tr><td colspan="4" style="text-align:center; color: var(--text-muted); padding: 1.5rem;">Esperando a generar reporte...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -547,11 +534,32 @@
             <form id="formPOSCliente">
                 <div class="form-group">
                     <label>Nombre Completo</label>
-                    <input type="text" id="posCliNombre" class="form-control" placeholder="Ej. Juan Pérez" required>
+                    <input type="text" id="posCliNombre" class="form-control" placeholder="EJ. JUAN PÉREZ" style="text-transform: uppercase;" required>
+                </div>
+                <div class="form-group">
+                    <label>Monto Inicial ($) - Opcional</label>
+                    <input type="number" id="posCliMonto" class="form-control" step="0.01" min="0" placeholder="0.00">
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-outline" onclick="cerrarModalPOSCliente()">Cancelar</button>
                     <button type="submit" class="btn-premium" style="flex: 2;">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Cliente -->
+    <div id="modalEditarCliente" class="modal-overlay">
+        <div class="modal">
+            <h3>Editar Nombre del Cliente</h3>
+            <form id="formEditarCliente" onsubmit="guardarEdicionCliente(event)">
+                <div class="form-group">
+                    <label>Nuevo Nombre Completo</label>
+                    <input type="text" id="editCliNombre" class="form-control" style="text-transform: uppercase;" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-outline" onclick="cerrarModalEditarCliente()">Cancelar</button>
+                    <button type="submit" class="btn-premium" style="flex: 2;">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -625,15 +633,16 @@
             configurarFiltros();
             
             mostrarMensaje('Conectando al sistema...', 'warning');
-            await carregarDadosSupabase();
+            await cargarDatosSupabase();
             mostrarMensaje('Sincronización exitosa', 'success');
         });
 
-        async function carregarDadosSupabase() {
+        async function cargarDatosSupabase() {
             const [emp, ven, abo] = await Promise.all([
                 supabaseFetch('empleados', 'GET', null, '?select=*&order=created_at.desc&limit=5000'),
-                supabaseFetch('ventas', 'GET', null, '?select=*&order=created_at.desc&limit=5000'),
-                supabaseFetch('abonos', 'GET', null, '?select=*&order=created_at.desc&limit=5000')
+                // AHORRO DE DATOS: Sólo descarga deudas pendientes en la carga global, lo archivado se ignora.
+                supabaseFetch('ventas', 'GET', null, '?select=*&archivado=eq.false&order=created_at.desc&limit=5000'),
+                supabaseFetch('abonos', 'GET', null, '?select=*&archivado=eq.false&order=created_at.desc&limit=5000')
             ]);
 
             const formatearFecha = (isoString) => {
@@ -641,12 +650,11 @@
                 return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
             };
 
-            if (emp) registros = emp.map(e => ({ id: e.id, numEmpleado: e.num_empleado, nombre: e.nombre, cargo: e.cargo, tipoContrato: e.tipo_contrato }));
-            if (ven) ventas = ven.map(v => ({ id: v.id, rawDate: new Date(v.created_at), fecha: formatearFecha(v.created_at), empleado: v.empleado_nombre, cliente: v.empleado_nombre, tipoPago: v.tipo_pago, productoNombre: v.producto_nombre, cantidad: v.cantidad_total, total: v.total, archivado: v.archivado }));
-            if (abo) abonos = abo.map(a => ({ id: a.id, rawDate: new Date(a.created_at), fecha: formatearFecha(a.created_at), cliente: a.cliente, monto: a.monto, archivado: a.archivado }));
+            if (emp) registros = emp.map(e => ({ id: e.id, numEmpleado: e.num_empleado, nombre: e.nombre.toUpperCase(), cargo: e.cargo, tipoContrato: e.tipo_contrato }));
+            if (ven) ventas = ven.map(v => ({ id: v.id, rawDate: new Date(v.created_at), fecha: formatearFecha(v.created_at), empleado: v.empleado_nombre.toUpperCase(), cliente: v.empleado_nombre.toUpperCase(), tipoPago: v.tipo_pago, productoNombre: v.producto_nombre, cantidad: v.cantidad_total, total: v.total, archivado: v.archivado }));
+            if (abo) abonos = abo.map(a => ({ id: a.id, rawDate: new Date(a.created_at), fecha: formatearFecha(a.created_at), cliente: a.cliente.toUpperCase(), monto: a.monto, archivado: a.archivado }));
 
             renderizarCreditos();
-            cambiarPeriodoReporte();
         }
 
         // --- TOASTS ---
@@ -682,7 +690,10 @@
             }
             
             if(tabId === 'creditos') renderizarCreditos();
-            if(tabId === 'reportes') cambiarPeriodoReporte();
+            if(tabId === 'reportes') { 
+                cambiarPeriodoReporte();
+                limpiarVistaReporte();
+            }
         }
 
         function debounce(fn, delay = 250) {
@@ -704,15 +715,6 @@
             if (fCred) fCred.addEventListener('input', aplicarFiltrosCredito);
         }
 
-        // Optimización de renderización para dispositivos móviles
-        function renderAsync(callback) {
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(callback);
-            } else {
-                setTimeout(callback, 1);
-            }
-        }
-
         /* =========================================
            MODALES Y CLIENTES
            ========================================= */
@@ -725,9 +727,18 @@
         function cerrarModalPOSCliente() { document.getElementById('modalPOSCliente').classList.remove('active'); document.getElementById('formPOSCliente').reset(); }
 
         async function guardarPOSClienteRapido() {
-            const nombre = document.getElementById('posCliNombre').value.trim();
+            const nombre = document.getElementById('posCliNombre').value.trim().toUpperCase();
+            const montoInicialStr = document.getElementById('posCliMonto').value;
+            const montoInicial = parseFloat(montoInicialStr);
             const numEmpleado = 'S/N';
             const tipoContrato = 'Eventual'; 
+            
+            // Verificación de cliente duplicado
+            const existeCliente = registros.some(r => r.nombre === nombre);
+            if (existeCliente) {
+                mostrarMensaje('Error: Este cliente ya está registrado.', 'error');
+                return; // Detiene el proceso para no guardar el duplicado
+            }
             
             mostrarMensaje('Registrando cliente...', 'warning');
 
@@ -735,11 +746,89 @@
             const emp = await supabaseFetch('empleados', 'POST', empData);
 
             if (emp && emp.length) {
-                registros.unshift({ id: emp[0].id, numEmpleado: emp[0].num_empleado, nombre: emp[0].nombre, cargo: emp[0].cargo, tipoContrato: emp[0].tipo_contrato });
+                registros.unshift({ id: emp[0].id, numEmpleado: emp[0].num_empleado, nombre: emp[0].nombre.toUpperCase(), cargo: emp[0].cargo, tipoContrato: emp[0].tipo_contrato });
+                
+                // Si se escribió un monto mayor a 0, registrar la deuda inicial automáticamente
+                if (!isNaN(montoInicial) && montoInicial > 0) {
+                    const vData = { empleado_nombre: nombre, producto_nombre: 'Saldo inicial', cantidad_total: 1, total: montoInicial, tipo_pago: 'Credito' };
+                    const v = await supabaseFetch('ventas', 'POST', vData);
+                    if (v && v.length) {
+                        const d = new Date(v[0].created_at);
+                        ventas.unshift({ id: v[0].id, rawDate: d, fecha: d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}), empleado: v[0].empleado_nombre, cliente: v[0].empleado_nombre, tipoPago: v[0].tipo_pago, productoNombre: v[0].producto_nombre, cantidad: v[0].cantidad_total, total: v[0].total, archivado: v[0].archivado });
+                    }
+                }
+
                 cerrarModalPOSCliente();
                 mostrarMensaje('Cliente guardado con éxito.', 'success');
                 renderizarCreditos();
             }
+        }
+
+        // --- EDITAR Y ELIMINAR CLIENTES ---
+        let clienteAEditar = null;
+
+        function abrirModalEditarCliente(nombre) {
+            clienteAEditar = nombre;
+            document.getElementById('editCliNombre').value = nombre;
+            document.getElementById('modalEditarCliente').classList.add('active');
+        }
+
+        function cerrarModalEditarCliente() {
+            document.getElementById('modalEditarCliente').classList.remove('active');
+            document.getElementById('formEditarCliente').reset();
+            clienteAEditar = null;
+        }
+
+        async function guardarEdicionCliente(e) {
+            e.preventDefault();
+            const nuevoNombre = document.getElementById('editCliNombre').value.trim().toUpperCase();
+
+            if (nuevoNombre === clienteAEditar) {
+                cerrarModalEditarCliente();
+                return;
+            }
+
+            const existeCliente = registros.some(r => r.nombre === nuevoNombre);
+            if (existeCliente) {
+                mostrarMensaje('Error: Este nombre ya está registrado.', 'error');
+                return;
+            }
+
+            mostrarMensaje('Actualizando nombre...', 'warning');
+
+            // Actualizar en la base de datos (Supabase aplicará el CASCADE a ventas y abonos automáticamente)
+            await supabaseFetch('empleados', 'PATCH', { nombre: nuevoNombre }, `?nombre=eq.${encodeURIComponent(clienteAEditar)}`);
+            
+            // Actualizar localmente para evitar recargar toda la página
+            registros.forEach(r => { if (r.nombre === clienteAEditar) r.nombre = nuevoNombre; });
+            ventas.forEach(v => { 
+                if (v.cliente === clienteAEditar) v.cliente = nuevoNombre; 
+                if (v.empleado === clienteAEditar) v.empleado = nuevoNombre; 
+            });
+            abonos.forEach(a => { if (a.cliente === clienteAEditar) a.cliente = nuevoNombre; });
+
+            cerrarModalEditarCliente();
+            mostrarMensaje('Nombre actualizado con éxito.', 'success');
+            renderizarCreditos();
+        }
+
+        async function eliminarCliente(nombre) {
+            if (!confirm(`¿Estás seguro de eliminar a ${nombre}?\n\n¡ADVERTENCIA! Se borrará TODO su historial de cargos y abonos de forma permanente y no se podrá recuperar.`)) {
+                return;
+            }
+
+            mostrarMensaje('Eliminando cliente...', 'warning');
+
+            // Eliminar de la base de datos
+            await supabaseFetch('empleados', 'DELETE', null, `?nombre=eq.${encodeURIComponent(nombre)}`);
+
+            // Eliminar localmente
+            registros = registros.filter(r => r.nombre !== nombre);
+            ventas = ventas.filter(v => v.cliente !== nombre);
+            abonos = abonos.filter(a => a.cliente !== nombre);
+
+            mostrarMensaje('Cliente eliminado permanentemente.', 'success');
+            renderizarCreditos();
         }
 
         // --- CARGO MANUAL (NUEVA DEUDA) ---
@@ -830,18 +919,24 @@
                 arrDeudas.sort((a, b) => a.cliente.localeCompare(b.cliente));
 
                 arrDeudas.forEach(d => {
-                    const emp = mapEmpleados.get(d.cliente);
-                    const tipoContrato = emp ? emp.tipoContrato : 'Eventual';
-                    const badgeClass = tipoContrato === 'Permanente' ? 'badge-contado' : 'badge-credito';
-
                     const div = document.createElement('div');
                     div.className = 'credit-card glass-panel';
                     
                     div.innerHTML = `
                         <div class="credit-info" onclick="abrirModalHistorial('${d.cliente}')" style="flex: 1;">
-                            <h4 class="font-semibold text-main flex-center gap-2" style="justify-content: flex-start;">
-                                ${d.cliente} 
-                            </h4>
+                            <div class="flex-between" style="align-items: flex-start; margin-bottom: 0.25rem;">
+                                <h4 class="font-semibold text-main flex-center gap-2" style="justify-content: flex-start; margin-bottom: 0;">
+                                    ${d.cliente} 
+                                </h4>
+                                <div style="display: flex; gap: 0.5rem; margin-right: 0.5rem;">
+                                    <button type="button" class="btn-icon-outline" style="width: 28px; height: 28px; padding: 4px;" onclick="event.stopPropagation(); abrirModalEditarCliente('${d.cliente}')" title="Editar Nombre">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </button>
+                                    <button type="button" class="btn-icon-danger" style="width: 28px; height: 28px; padding: 4px; border-radius: 8px;" onclick="event.stopPropagation(); eliminarCliente('${d.cliente}')" title="Eliminar Cliente">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
                             <p class="credit-amount">$${d.saldo.toFixed(2)}</p>
                             <span class="credit-hint text-primary">Ver historial <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
                         </div>
@@ -920,6 +1015,14 @@
            LÓGICA DE LOS REPORTES
            ========================================= */
 
+        function limpiarVistaReporte() {
+            document.getElementById('rangoFechaTexto').innerText = 'Haz clic en "Generar Reporte" para descargar los datos de Supabase';
+            document.getElementById('repTotalVendido').innerText = '$0.00';
+            document.getElementById('repTotalAbonado').innerText = '$0.00';
+            document.getElementById('repTotalPorCobrar').innerText = '$0.00';
+            document.getElementById('tablaReporteDias').innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted); padding: 1.5rem;">Esperando a generar reporte...</td></tr>';
+        }
+
         function cambiarPeriodoReporte() {
             const filtro = document.getElementById('filtroPeriodoReporte').value;
             const camposPersonalizados = document.querySelectorAll('.RangoPersonalizado');
@@ -932,8 +1035,7 @@
             } else {
                 camposPersonalizados.forEach(el => el.style.display = 'none');
             }
-            
-            renderizarReporteGeneral();
+            // NOTA: Ya no renderiza automáticamente para ahorrar datos.
         }
 
         function obtenerRangoFechas() {
@@ -963,23 +1065,45 @@
             return { inicio, fin };
         }
 
-        function renderizarReporteGeneral() {
+        async function generarReporteSupabase() {
             const { inicio, fin } = obtenerRangoFechas();
+            // No existe filtroContratoReporte en el HTML actual, se elimina lógica para evitar errores.
             
+            mostrarMensaje('Descargando datos del reporte...', 'warning');
+
+            // Convertir fechas a formato compatible con Supabase
+            const inicioISO = inicio.toISOString();
+            const finISO = fin.toISOString();
+
+            // Descargar SOLAMENTE los datos de la fecha seleccionada
+            const [venRep, aboRep] = await Promise.all([
+                supabaseFetch('ventas', 'GET', null, `?select=*&created_at=gte.${inicioISO}&created_at=lte.${finISO}&limit=5000`),
+                supabaseFetch('abonos', 'GET', null, `?select=*&created_at=gte.${inicioISO}&created_at=lte.${finISO}&limit=5000`)
+            ]);
+
+            if (!venRep || !aboRep) {
+                mostrarMensaje('Error al descargar los datos del reporte.', 'error');
+                return;
+            }
+
+            const formatearFecha = (isoString) => {
+                const d = new Date(isoString);
+                return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+            };
+
+            const ventasRango = venRep.map(v => ({ rawDate: new Date(v.created_at), fecha: formatearFecha(v.created_at), cliente: v.empleado_nombre.toUpperCase(), total: v.total, tipoPago: v.tipo_pago, archivado: v.archivado }));
+            const abonosRango = aboRep.map(a => ({ rawDate: new Date(a.created_at), fecha: formatearFecha(a.created_at), cliente: a.cliente.toUpperCase(), monto: a.monto, archivado: a.archivado }));
+
+            renderizarReporteConDatos(ventasRango, abonosRango, inicio, fin);
+            mostrarMensaje('Reporte generado con éxito', 'success');
+        }
+
+        function renderizarReporteConDatos(ventasRango, abonosRango, inicio, fin) {
             const mapEmpleados = new Map();
             registros.forEach(r => mapEmpleados.set(r.nombre, r));
 
             const opcionesFecha = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('rangoFechaTexto').innerText = `Desde ${inicio.toLocaleDateString('es-ES', opcionesFecha)} hasta ${fin.toLocaleDateString('es-ES', opcionesFecha)}`;
-
-            const ventasRango = ventas.filter(v => {
-                if (v.rawDate < inicio || v.rawDate > fin) return false;
-                return true;
-            });
-            const abonosRango = abonos.filter(a => {
-                if (a.rawDate < inicio || a.rawDate > fin) return false;
-                return true;
-            });
 
             let totalVendido = 0;
             let totalAbonado = 0;
@@ -987,6 +1111,7 @@
             ventasRango.forEach(v => totalVendido += v.total);
             abonosRango.forEach(a => totalAbonado += a.monto);
 
+            // Calcular deuda total global (usando la memoria global que sólo tiene deudas activas)
             let deudaRestanteGlobal = 0;
             let totalAbonadoGlobal = 0;
             ventas.forEach(v => { 
