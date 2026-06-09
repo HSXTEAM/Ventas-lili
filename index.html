@@ -303,6 +303,27 @@
         .redesigned-empty .empty-icon { font-size: 2rem; margin-bottom: 0.75rem; }
         .redesigned-empty p { color: var(--text-main); font-weight: 800; margin-bottom: 0.25rem; }
         .redesigned-empty span { color: var(--text-muted); font-size: 0.88rem; }
+
+        .modal-header-compact { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+        .modal-header-compact h3 { margin: 0 0 0.25rem; }
+        .modal-header-compact p { margin: 0; color: var(--text-muted); font-size: 0.86rem; line-height: 1.35; }
+        .modal-close-mini { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-solid); background: #fff; color: var(--text-muted); font-size: 1.45rem; line-height: 1; cursor: pointer; flex-shrink: 0; }
+        .modal-close-mini:hover { color: var(--danger); background: #FEF2F2; border-color: #FECACA; }
+        .modal-client-picker { max-width: 520px; }
+        .quick-client-panel { background: var(--bg-body); border: 1px solid var(--border-solid); border-radius: 18px; padding: 0.85rem; }
+        .quick-client-panel > label { display: block; font-size: 0.78rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.55rem; text-transform: uppercase; letter-spacing: 0.06em; }
+        .quick-client-list { display: grid; gap: 0.45rem; margin-top: 0.7rem; max-height: min(320px, 42vh); overflow-y: auto; padding-right: 0.15rem; -webkit-overflow-scrolling: touch; }
+        .quick-client-item { width: 100%; border: 1px solid var(--border-solid); background: #fff; border-radius: 14px; padding: 0.7rem 0.8rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; cursor: pointer; text-align: left; }
+        .quick-client-item:hover { border-color: var(--primary); background: #F5F3FF; }
+        .quick-client-name { min-width: 0; font-size: 0.9rem; font-weight: 850; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .quick-client-debt { font-size: 0.76rem; color: var(--danger); font-weight: 900; white-space: nowrap; }
+        .quick-client-debt.ok { color: var(--success); }
+        .quick-client-empty { color: var(--text-muted); font-size: 0.86rem; text-align: center; padding: 0.75rem 0 0.25rem; }
+        .btn-toggle-new-client { width: 100%; margin-top: 0.85rem; border: 1px dashed var(--primary); color: var(--primary); background: #F5F3FF; border-radius: 14px; padding: 0.78rem; font-weight: 900; cursor: pointer; }
+        .new-client-form-collapsed { display: none; margin-top: 0.85rem; padding: 0.9rem; border: 1px solid var(--border-solid); border-radius: 18px; background: #fff; }
+        .new-client-form-collapsed.active { display: block; }
+        .compact-actions { margin-top: 1rem; }
+
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
         .badge-contado { background: #DEF7EC; color: #047857; }
         .badge-credito { background: #FEF2F2; color: #DC2626; }
@@ -384,31 +405,48 @@
             .btn-outline { font-size: 0.9rem !important; padding: 0.5rem 1rem !important; min-height: 44px !important; border-radius: 10px; }
             .pos-section-title { font-size: 1.05rem; margin-bottom: 0.5rem; }
             
-            /* Créditos rediseñados */
-            .creditos-dashboard { gap: 0.65rem; }
-            .credits-hero { padding: 1rem; border-radius: 16px; align-items: stretch; flex-direction: column; }
-            .credits-hero p { font-size: 0.82rem; }
-            .btn-new-client { width: 100%; justify-content: center; border-radius: 12px; padding: 0.72rem; }
-            .credit-metrics-grid { grid-template-columns: 1fr; gap: 0.5rem; }
-            .metric-card { padding: 0.75rem; border-radius: 14px; }
-            .metric-icon { width: 36px; height: 36px; border-radius: 11px; font-size: 1.1rem; }
-            .metric-card strong { font-size: 1.25rem; }
-            .credit-tools { position: sticky; top: 0; padding: 0.7rem; border-radius: 16px; }
-            .credit-search-row { gap: 0.5rem; margin-bottom: 0.75rem; }
-            .btn-clear-filter { padding: 0 0.65rem; border-radius: 9px; font-size: 0.78rem; }
-            .alphabet-header { align-items: flex-start; margin-bottom: 0.55rem; }
+            /* Créditos rediseñados - versión compacta para celular */
+            .creditos-dashboard { gap: 0.45rem; }
+            .credits-hero { padding: 0.65rem; border-radius: 14px; align-items: stretch; flex-direction: column; gap: 0.45rem; }
+            .mini-label { display: none; }
+            .credits-hero .pos-section-title { font-size: 0.98rem; margin: 0; }
+            .credits-hero p { display: none; }
+            .btn-new-client { width: 100%; justify-content: center; border-radius: 11px; padding: 0.58rem 0.65rem; font-size: 0.82rem; box-shadow: none; }
+            .btn-new-client span { width: 20px; height: 20px; font-size: 0.95rem; }
+            .credit-metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; }
+            .metric-card { padding: 0.48rem 0.42rem; border-radius: 12px; display: block; text-align: center; }
+            .metric-icon { display: none; }
+            .metric-card small { font-size: 0.58rem; letter-spacing: 0.03em; margin-bottom: 0.12rem; }
+            .metric-card strong { font-size: 0.9rem; line-height: 1.05; display: block; }
+            .credit-tools { position: sticky; top: 0; padding: 0.5rem; border-radius: 14px; z-index: 50; }
+            .credit-search-row { gap: 0.35rem; margin-bottom: 0.5rem; }
+            .credit-search-box { min-width: 0; }
+            .form-control { font-size: 16px !important; }
+            .btn-clear-filter { padding: 0 0.48rem; border-radius: 8px; font-size: 0.7rem; min-width: 58px; }
+            .alphabet-header { align-items: center; margin-bottom: 0.35rem; }
+            .alphabet-header strong { font-size: 0.74rem; }
             .alphabet-header span { display: none; }
-            .alphabet-header small { font-size: 0.68rem; padding: 0.28rem 0.5rem; }
-            .letter-btn { min-width: 36px; height: 38px; border-radius: 10px; font-size: 0.78rem; }
-            .letter-btn.all { min-width: 62px; }
-            .clientes-grid { grid-template-columns: 1fr; gap: 0.55rem; }
-            .credit-card { padding: 0.75rem; grid-template-columns: minmax(0, 1fr) 84px; gap: 0.55rem; border-radius: 15px; }
-            .client-initial { width: 34px; height: 34px; border-radius: 11px; }
-            .client-name { font-size: 0.92rem; }
-            .credit-amount { font-size: 1.18rem; margin: 0.2rem 0; }
-            .credit-actions { min-width: 84px; gap: 0.35rem; }
-            .quick-icon-actions .btn-icon-outline, .quick-icon-actions .btn-icon-danger { width: 28px; height: 28px; border-radius: 8px; }
-            .client-action-btn { padding: 0.48rem 0.45rem; font-size: 0.72rem; }
+            .alphabet-header small { font-size: 0.62rem; padding: 0.22rem 0.42rem; }
+            .alphabet-scroll { margin-left: -0.05rem; margin-right: -0.05rem; }
+            .alphabet-bar { gap: 0.22rem; }
+            .letter-btn { min-width: 31px; height: 32px; border-radius: 8px; font-size: 0.7rem; }
+            .letter-btn .letter-count { font-size: 0.5rem; margin-top: 2px; }
+            .letter-btn.all { min-width: 52px; }
+            .filter-info { font-size: 0.68rem; margin-top: 0.38rem; }
+            .clientes-grid { grid-template-columns: 1fr; gap: 0.38rem; }
+            .credit-card { padding: 0.52rem; grid-template-columns: minmax(0, 1fr) 74px; gap: 0.42rem; border-radius: 13px; }
+            .credit-card::before { width: 3px; }
+            .client-main { padding-left: 0.18rem; }
+            .client-topline { gap: 0.42rem; margin-bottom: 0.22rem; }
+            .client-initial { width: 28px; height: 28px; border-radius: 9px; font-size: 0.78rem; }
+            .client-name { font-size: 0.82rem; line-height: 1.05; }
+            .client-subtitle { font-size: 0.62rem; margin-top: 0.08rem; }
+            .credit-amount { font-size: 0.98rem; margin: 0.12rem 0; }
+            .credit-hint { font-size: 0.62rem; }
+            .credit-actions { min-width: 74px; gap: 0.24rem; }
+            .quick-icon-actions { gap: 0.22rem; margin-bottom: 0; }
+            .quick-icon-actions .btn-icon-outline, .quick-icon-actions .btn-icon-danger { width: 24px; height: 24px; border-radius: 7px; padding: 4px; }
+            .client-action-btn { padding: 0.38rem 0.32rem; font-size: 0.64rem; border-radius: 8px; }
             
             /* Optimización de tabla de reportes para móviles */
             .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -420,9 +458,25 @@
             .report-card-metric { padding: 0.75rem; }
             .report-card-metric .metric-value { font-size: 1.35rem; }
 
-            /* Modales y Toasts */
-            .modal { padding: 1.25rem; width: 92%; border-radius: 16px; }
-            .modal h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+            /* Modales, teclado y Toasts */
+            .modal-overlay { align-items: flex-start; justify-content: center; overflow-y: auto; height: var(--app-visible-height, 100dvh); padding: 0.5rem 0.35rem calc(0.7rem + env(safe-area-inset-bottom)); }
+            .modal { padding: 0.9rem; width: 96%; max-width: 520px; max-height: calc(var(--app-visible-height, 100dvh) - 1rem); overflow-y: auto; border-radius: 15px; transform: none; }
+            .modal-overlay.active .modal { transform: none; }
+            .modal h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+            .modal-header-compact { gap: 0.5rem; margin-bottom: 0.65rem; }
+            .modal-header-compact p { font-size: 0.72rem; }
+            .modal-close-mini { width: 30px; height: 30px; border-radius: 8px; }
+            .quick-client-panel { padding: 0.55rem; border-radius: 14px; }
+            .quick-client-panel > label { font-size: 0.68rem; margin-bottom: 0.38rem; }
+            .quick-client-list { max-height: min(260px, calc(var(--app-visible-height, 100dvh) - 285px)); gap: 0.32rem; }
+            .quick-client-item { padding: 0.52rem 0.58rem; border-radius: 11px; }
+            .quick-client-name { font-size: 0.8rem; }
+            .quick-client-debt { font-size: 0.68rem; }
+            .btn-toggle-new-client { margin-top: 0.55rem; padding: 0.58rem; border-radius: 11px; font-size: 0.82rem; }
+            .new-client-form-collapsed { margin-top: 0.55rem; padding: 0.62rem; border-radius: 13px; }
+            .form-group { margin-bottom: 0.72rem; }
+            .form-group label { font-size: 0.75rem; margin-bottom: 0.32rem; }
+            .modal-actions { gap: 0.5rem; margin-top: 0.85rem; }
             .toast-container { width: 92%; top: 10px; }
             .toast { padding: 0.6rem 0.85rem; font-size: 0.85rem; border-radius: 10px; }
             
@@ -431,6 +485,9 @@
             * { animation-duration: 0.1s !important; transition-duration: 0.1s !important; }
             .credit-card:hover, .btn-premium:hover { transform: none; box-shadow: var(--shadow-sm); }
         }
+
+        .teclado-activo .mobile-nav { transform: translateY(105%); }
+        .teclado-activo body { padding-bottom: 12px; }
 
     </style>
 </head>
@@ -479,7 +536,7 @@
                         <p>Busca, filtra por letra y gestiona cargos o abonos sin recorrer toda la lista.</p>
                     </div>
                     <button type="button" class="btn-new-client" onclick="abrirModalPOSCliente()">
-                        <span>+</span> Nuevo Cliente
+                        <span>+</span> Agregar cargo / cliente
                     </button>
                 </div>
 
@@ -673,11 +730,32 @@
         </div>
     </div>
 
-    <!-- Modal Alta Rápida de Cliente -->
+    <!-- Modal Alta Rápida de Cliente / Selección para Cargo -->
     <div id="modalPOSCliente" class="modal-overlay">
-        <div class="modal">
-            <h3>Registrar Cliente</h3>
-            <form id="formPOSCliente">
+        <div class="modal modal-client-picker">
+            <div class="modal-header-compact">
+                <div>
+                    <h3>Agregar cargo o cliente</h3>
+                    <p>Selecciona un cliente registrado para abrir rápido el formulario de cargo.</p>
+                </div>
+                <button type="button" class="modal-close-mini" onclick="cerrarModalPOSCliente()" aria-label="Cerrar">×</button>
+            </div>
+
+            <div class="quick-client-panel">
+                <label for="buscadorClienteCargo">Clientes registrados</label>
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="buscadorClienteCargo" class="form-control" placeholder="Buscar cliente para agregar cargo...">
+                </div>
+                <div id="listaClientesCargoRapido" class="quick-client-list"></div>
+                <p id="clientesCargoVacios" class="quick-client-empty" style="display:none;">No encontré clientes con ese nombre.</p>
+            </div>
+
+            <button type="button" id="btnToggleNuevoCliente" class="btn-toggle-new-client" onclick="toggleFormularioNuevoCliente()">
+                + Registrar cliente nuevo
+            </button>
+
+            <form id="formPOSCliente" class="new-client-form-collapsed">
                 <div class="form-group">
                     <label>Nombre Completo</label>
                     <input type="text" id="posCliNombre" class="form-control" placeholder="EJ. JUAN PÉREZ" style="text-transform: uppercase;" required>
@@ -686,8 +764,8 @@
                     <label>Monto Inicial ($) - Opcional</label>
                     <input type="number" id="posCliMonto" class="form-control" step="0.01" min="0" placeholder="0.00">
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-outline" onclick="cerrarModalPOSCliente()">Cancelar</button>
+                <div class="modal-actions compact-actions">
+                    <button type="button" class="btn-outline" onclick="toggleFormularioNuevoCliente(false)">Ocultar</button>
                     <button type="submit" class="btn-premium" style="flex: 2;">Guardar Cliente</button>
                 </div>
             </form>
@@ -802,10 +880,8 @@
 
         function claveNombreCliente(valor) {
             return limpiarTextoNombre(valor)
-                .replace(/Ñ/g, '__ENIE__')
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
-                .replace(/__ENIE__/g, 'Ñ')
                 .replace(/[^A-Z0-9Ñ\s]/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
@@ -1025,14 +1101,111 @@
         function configurarEventosModalesPOS() {
             const formCli = document.getElementById('formPOSCliente');
             if (formCli) formCli.addEventListener('submit', (e) => { e.preventDefault(); guardarPOSClienteRapido(); });
+
             const inputNombreNuevo = document.getElementById('posCliNombre');
             const inputNombreEditar = document.getElementById('editCliNombre');
+            const buscadorCargo = document.getElementById('buscadorClienteCargo');
+
             if (inputNombreNuevo) inputNombreNuevo.addEventListener('blur', () => inputNombreNuevo.value = limpiarTextoNombre(inputNombreNuevo.value));
             if (inputNombreEditar) inputNombreEditar.addEventListener('blur', () => inputNombreEditar.value = limpiarTextoNombre(inputNombreEditar.value));
+            if (buscadorCargo) buscadorCargo.addEventListener('input', () => renderizarClientesParaCargoRapido(buscadorCargo.value));
+
+            configurarTecladoMovil();
         }
 
-        function abrirModalPOSCliente() { document.getElementById('modalPOSCliente').classList.add('active'); }
-        function cerrarModalPOSCliente() { document.getElementById('modalPOSCliente').classList.remove('active'); document.getElementById('formPOSCliente').reset(); }
+        function abrirModalPOSCliente() {
+            const modal = document.getElementById('modalPOSCliente');
+            const buscador = document.getElementById('buscadorClienteCargo');
+            if (modal) modal.classList.add('active');
+            toggleFormularioNuevoCliente(false);
+            if (buscador) buscador.value = '';
+            renderizarClientesParaCargoRapido('');
+        }
+
+        function cerrarModalPOSCliente() {
+            const modal = document.getElementById('modalPOSCliente');
+            const form = document.getElementById('formPOSCliente');
+            const buscador = document.getElementById('buscadorClienteCargo');
+            if (modal) modal.classList.remove('active');
+            if (form) form.reset();
+            if (buscador) buscador.value = '';
+            toggleFormularioNuevoCliente(false);
+        }
+
+        function toggleFormularioNuevoCliente(forzarEstado = null) {
+            const form = document.getElementById('formPOSCliente');
+            const btn = document.getElementById('btnToggleNuevoCliente');
+            if (!form) return;
+            const activar = forzarEstado === null ? !form.classList.contains('active') : !!forzarEstado;
+            form.classList.toggle('active', activar);
+            if (btn) btn.textContent = activar ? '− Ocultar registro de cliente nuevo' : '+ Registrar cliente nuevo';
+            if (activar) {
+                setTimeout(() => document.getElementById('posCliNombre')?.focus({ preventScroll: false }), 80);
+            }
+        }
+
+        function renderizarClientesParaCargoRapido(filtroTexto = '') {
+            const lista = document.getElementById('listaClientesCargoRapido');
+            const vacio = document.getElementById('clientesCargoVacios');
+            if (!lista) return;
+
+            const clientes = obtenerResumenCreditos();
+            const filtroKey = claveNombreCliente(filtroTexto);
+            const filtroLower = (filtroTexto || '').toLowerCase().trim();
+            let filtrados = clientes;
+
+            if (filtroTexto) {
+                filtrados = clientes.filter(item =>
+                    item.cliente.toLowerCase().includes(filtroLower) ||
+                    item.clienteKey.includes(filtroKey)
+                );
+            }
+
+            filtrados = filtrados.slice(0, 80);
+            lista.innerHTML = filtrados.map(item => {
+                const clienteHTML = escaparHTML(item.cliente);
+                const clienteJS = escaparParametroJS(item.cliente);
+                const saldo = Number(item.saldo) || 0;
+                const saldoClase = saldo <= 0.01 ? ' ok' : '';
+                const saldoTexto = saldo <= 0.01 ? 'Al día' : `$${saldo.toFixed(2)}`;
+                return `<button type="button" class="quick-client-item" onclick="seleccionarClienteParaCargo('${clienteJS}')">
+                    <span class="quick-client-name" title="${clienteHTML}">${clienteHTML}</span>
+                    <span class="quick-client-debt${saldoClase}">${saldoTexto}</span>
+                </button>`;
+            }).join('');
+
+            if (vacio) vacio.style.display = filtrados.length ? 'none' : 'block';
+        }
+
+        function seleccionarClienteParaCargo(nombre) {
+            const cliente = limpiarTextoNombre(nombre);
+            cerrarModalPOSCliente();
+            setTimeout(() => abrirModalNuevaDeuda(cliente), 80);
+        }
+
+        function configurarTecladoMovil() {
+            const aplicarAlturaVisible = () => {
+                const alto = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                document.documentElement.style.setProperty('--app-visible-height', `${alto}px`);
+
+                const tecladoActivo = window.visualViewport && (window.innerHeight - window.visualViewport.height) > 120;
+                document.documentElement.classList.toggle('teclado-activo', !!tecladoActivo);
+            };
+
+            aplicarAlturaVisible();
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', aplicarAlturaVisible);
+                window.visualViewport.addEventListener('scroll', aplicarAlturaVisible);
+            } else {
+                window.addEventListener('resize', aplicarAlturaVisible);
+            }
+
+            document.addEventListener('focusin', (ev) => {
+                const el = ev.target;
+                if (!el || !['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)) return;
+                setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 180);
+            });
+        }
 
         async function guardarPOSClienteRapido() {
             if (guardandoCliente) return;
@@ -1217,9 +1390,10 @@
         let clienteSeleccionadoParaDeuda = null;
 
         function abrirModalNuevaDeuda(c) { 
-            clienteSeleccionadoParaDeuda = c; 
-            document.getElementById('modalDeudaNombreCliente').textContent = c; 
+            clienteSeleccionadoParaDeuda = limpiarTextoNombre(c); 
+            document.getElementById('modalDeudaNombreCliente').textContent = clienteSeleccionadoParaDeuda; 
             document.getElementById('modalNuevaDeuda').classList.add('active'); 
+            setTimeout(() => document.getElementById('deudaPrecio')?.focus({ preventScroll: false }), 120);
         }
 
         function cerrarModalNuevaDeuda() { 
@@ -1681,4 +1855,3 @@
     </script>
 </body>
 </html>
-
