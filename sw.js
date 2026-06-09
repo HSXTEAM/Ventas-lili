@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ventas-lili-v5';
+const CACHE_NAME = 'ventas-lili-v6-boton-fijo';
 const APP_SHELL = [
   './',
   './index.html',
@@ -26,7 +26,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   event.respondWith(
     fetch(request)
       .then(response => {
