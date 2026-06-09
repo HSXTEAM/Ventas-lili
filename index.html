@@ -215,13 +215,94 @@
         .modern-table th { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 1rem 0.5rem; border-bottom: 1px solid var(--border-solid); }
         .modern-table td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
         .modern-table tr:last-child td { border-bottom: none; }
-        
-        .credit-card {
-            padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border-solid); margin-bottom: 1rem;
+
+        .creditos-dashboard { display: grid; gap: 1rem; }
+        .credits-hero {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background:
+                radial-gradient(circle at top left, rgba(91, 75, 255, 0.16), transparent 35%),
+                rgba(255, 255, 255, 0.9);
         }
+        .credits-hero-content { min-width: 0; }
+        .credits-hero .pos-section-title { margin: 0.2rem 0 0.35rem; font-size: clamp(1.35rem, 2vw, 2rem); letter-spacing: -0.04em; }
+        .credits-hero p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.45; max-width: 560px; }
+        .mini-label { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--primary); background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 999px; padding: 0.35rem 0.75rem; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+        .btn-new-client { border: none; border-radius: 18px; padding: 0.9rem 1.15rem; background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-float); display: inline-flex; align-items: center; gap: 0.55rem; white-space: nowrap; }
+        .btn-new-client span { width: 24px; height: 24px; border-radius: 999px; background: rgba(255,255,255,0.2); display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .btn-new-client:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(91, 75, 255, 0.24); }
+
+        .credit-metrics-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+        .metric-card { padding: 1rem; display: flex; align-items: center; gap: 0.85rem; border: 1px solid rgba(255,255,255,0.75); }
+        .metric-icon { width: 44px; height: 44px; border-radius: 14px; background: #F5F3FF; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
+        .metric-card small { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.15rem; }
+        .metric-card strong { font-size: 1.55rem; line-height: 1; letter-spacing: -0.04em; }
+        .danger-metric strong { color: var(--danger); }
+        .success-metric strong { color: var(--success); }
+
+        .credit-tools { padding: 1rem; position: sticky; top: 8px; z-index: 30; }
+        .credit-search-row { display: flex; gap: 0.75rem; align-items: stretch; margin-bottom: 1rem; }
+        .credit-search-box { flex: 1; }
+        .btn-clear-filter { border: 1px solid var(--border-solid); background: #fff; color: var(--text-muted); border-radius: 14px; padding: 0 1rem; font-weight: 800; cursor: pointer; }
+        .btn-clear-filter:hover { border-color: var(--primary); color: var(--primary); background: #F5F3FF; }
+        .alphabet-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+        .alphabet-header strong { display: block; font-size: 0.95rem; }
+        .alphabet-header span { display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.18rem; }
+        .alphabet-header small { color: var(--primary); background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 999px; padding: 0.35rem 0.65rem; font-weight: 800; white-space: nowrap; }
+        .alphabet-scroll { overflow-x: auto; padding-bottom: 0.15rem; -webkit-overflow-scrolling: touch; }
+        .alphabet-bar { display: flex; gap: 0.35rem; min-width: max-content; }
+        .letter-btn { min-width: 42px; height: 42px; border-radius: 13px; border: 1px solid var(--border-solid); background: #fff; color: var(--text-main); cursor: pointer; font-weight: 800; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; transition: all 0.2s; }
+        .letter-btn .letter-count { font-size: 0.58rem; color: var(--text-light); margin-top: 3px; font-weight: 700; }
+        .letter-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); background: #F5F3FF; transform: translateY(-1px); }
+        .letter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 8px 18px var(--primary-glow); }
+        .letter-btn.active .letter-count { color: rgba(255,255,255,0.78); }
+        .letter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .letter-btn.all { min-width: 72px; }
+        .filter-info { margin-top: 0.65rem; color: var(--text-muted); font-size: 0.82rem; }
+
+        .clientes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.85rem; align-items: start; }
+        .credit-card {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.85rem;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(229, 231, 235, 0.95);
+            background: rgba(255,255,255,0.92);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .credit-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--primary); opacity: 0.9; }
+        .credit-card.debt-free::before { background: var(--success); }
         .credit-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-        .credit-amount { font-size: 1.4rem; font-weight: 800; color: var(--danger); letter-spacing: -0.02em; margin: 0.25rem 0; }
-        .credit-hint { font-size: 0.75rem; color: var(--text-light); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .client-main { min-width: 0; padding-left: 0.35rem; }
+        .client-topline { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.45rem; min-width: 0; }
+        .client-initial { width: 38px; height: 38px; border-radius: 14px; background: #F5F3FF; color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-weight: 900; flex-shrink: 0; }
+        .client-name-wrap { min-width: 0; }
+        .client-name { font-size: 1rem; line-height: 1.15; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .client-subtitle { color: var(--text-muted); font-size: 0.74rem; margin-top: 0.18rem; }
+        .credit-amount { font-size: 1.35rem; font-weight: 900; color: var(--danger); letter-spacing: -0.04em; margin: 0.35rem 0 0.2rem; }
+        .credit-card.debt-free .credit-amount { color: var(--success); }
+        .credit-hint { font-size: 0.75rem; color: var(--primary); font-weight: 800; display: flex; align-items: center; gap: 4px; }
+        .credit-actions { display: grid; gap: 0.45rem; min-width: 94px; }
+        .quick-icon-actions { display: flex; gap: 0.35rem; justify-content: flex-end; margin-bottom: 0.1rem; }
+        .quick-icon-actions .btn-icon-outline, .quick-icon-actions .btn-icon-danger { width: 32px; height: 32px; padding: 6px; border-radius: 10px; background: #fff; border: 1px solid var(--border-solid); }
+        .quick-icon-actions .btn-icon-danger { color: var(--danger); }
+        .quick-icon-actions .btn-icon-danger:hover { background: #FEE2E2; }
+        .client-action-btn { border: none; border-radius: 11px; padding: 0.55rem 0.65rem; color: #fff; font-weight: 800; font-size: 0.78rem; cursor: pointer; }
+        .client-action-btn.charge { background: var(--primary); }
+        .client-action-btn.pay { background: var(--success); }
+        .client-action-btn:disabled { opacity: 0.45; background: var(--text-light); cursor: not-allowed; }
+        .redesigned-empty { padding: 3rem 1rem; text-align: center; background: rgba(255,255,255,0.75); border: 1px dashed var(--border-solid); border-radius: 24px; }
+        .redesigned-empty .empty-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .redesigned-empty p { color: var(--text-main); font-weight: 800; margin-bottom: 0.25rem; }
+        .redesigned-empty span { color: var(--text-muted); font-size: 0.88rem; }
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
         .badge-contado { background: #DEF7EC; color: #047857; }
         .badge-credito { background: #FEF2F2; color: #DC2626; }
@@ -303,10 +384,31 @@
             .btn-outline { font-size: 0.9rem !important; padding: 0.5rem 1rem !important; min-height: 44px !important; border-radius: 10px; }
             .pos-section-title { font-size: 1.05rem; margin-bottom: 0.5rem; }
             
-            /* Tablas y Listas */
-            .credit-card { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 10px; }
-            .credit-info h4 { font-size: 0.95rem; }
-            .credit-info p { font-size: 1.1rem; margin: 0.15rem 0; }
+            /* Créditos rediseñados */
+            .creditos-dashboard { gap: 0.65rem; }
+            .credits-hero { padding: 1rem; border-radius: 16px; align-items: stretch; flex-direction: column; }
+            .credits-hero p { font-size: 0.82rem; }
+            .btn-new-client { width: 100%; justify-content: center; border-radius: 12px; padding: 0.72rem; }
+            .credit-metrics-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+            .metric-card { padding: 0.75rem; border-radius: 14px; }
+            .metric-icon { width: 36px; height: 36px; border-radius: 11px; font-size: 1.1rem; }
+            .metric-card strong { font-size: 1.25rem; }
+            .credit-tools { position: sticky; top: 0; padding: 0.7rem; border-radius: 16px; }
+            .credit-search-row { gap: 0.5rem; margin-bottom: 0.75rem; }
+            .btn-clear-filter { padding: 0 0.65rem; border-radius: 9px; font-size: 0.78rem; }
+            .alphabet-header { align-items: flex-start; margin-bottom: 0.55rem; }
+            .alphabet-header span { display: none; }
+            .alphabet-header small { font-size: 0.68rem; padding: 0.28rem 0.5rem; }
+            .letter-btn { min-width: 36px; height: 38px; border-radius: 10px; font-size: 0.78rem; }
+            .letter-btn.all { min-width: 62px; }
+            .clientes-grid { grid-template-columns: 1fr; gap: 0.55rem; }
+            .credit-card { padding: 0.75rem; grid-template-columns: minmax(0, 1fr) 84px; gap: 0.55rem; border-radius: 15px; }
+            .client-initial { width: 34px; height: 34px; border-radius: 11px; }
+            .client-name { font-size: 0.92rem; }
+            .credit-amount { font-size: 1.18rem; margin: 0.2rem 0; }
+            .credit-actions { min-width: 84px; gap: 0.35rem; }
+            .quick-icon-actions .btn-icon-outline, .quick-icon-actions .btn-icon-danger { width: 28px; height: 28px; border-radius: 8px; }
+            .client-action-btn { padding: 0.48rem 0.45rem; font-size: 0.72rem; }
             
             /* Optimización de tabla de reportes para móviles */
             .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -369,25 +471,69 @@
 
         <!-- SECCIÓN 1: CRÉDITOS -->
         <main id="creditos" class="tab-content active">
-            <section class="glass-panel" style="padding: 1.5rem;">
-                <div class="flex-between" style="margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                    <h2 class="pos-section-title" style="margin:0;">Cartera de Créditos</h2>
-                    <button type="button" class="btn-premium-sm" onclick="abrirModalPOSCliente()">
-                        + Nuevo Cliente
+            <section class="creditos-dashboard">
+                <div class="credits-hero glass-panel">
+                    <div class="credits-hero-content">
+                        <span class="mini-label">Directorio de clientes</span>
+                        <h2 class="pos-section-title">Cartera de Créditos</h2>
+                        <p>Busca, filtra por letra y gestiona cargos o abonos sin recorrer toda la lista.</p>
+                    </div>
+                    <button type="button" class="btn-new-client" onclick="abrirModalPOSCliente()">
+                        <span>+</span> Nuevo Cliente
                     </button>
                 </div>
-                
-                <div class="form-row" style="margin-bottom: 1.5rem;">
-                    <div class="search-wrapper flex-1">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" id="filtroCreditos" class="form-control" placeholder="Buscar cliente...">
-                    </div>
+
+                <div class="credit-metrics-grid">
+                    <article class="metric-card glass-panel">
+                        <span class="metric-icon">👥</span>
+                        <div>
+                            <small>Clientes</small>
+                            <strong id="totalClientesCredito">0</strong>
+                        </div>
+                    </article>
+                    <article class="metric-card glass-panel danger-metric">
+                        <span class="metric-icon">💳</span>
+                        <div>
+                            <small>Por cobrar</small>
+                            <strong id="totalPorCobrarCredito">$0.00</strong>
+                        </div>
+                    </article>
+                    <article class="metric-card glass-panel success-metric">
+                        <span class="metric-icon">✅</span>
+                        <div>
+                            <small>Clientes al día</small>
+                            <strong id="totalClientesAlDiaCredito">0</strong>
+                        </div>
+                    </article>
                 </div>
-                
-                <div id="listaCreditos"></div>
-                <div id="creditosVacios" class="empty-state" style="display: none; padding: 3rem 0;">
-                    <p style="color: var(--text-main); font-weight: 500;">No se encontraron clientes.</p>
-                    <p style="font-size: 0.85rem;">Registra un nuevo cliente para comenzar.</p>
+
+                <div class="credit-tools glass-panel">
+                    <div class="credit-search-row">
+                        <div class="search-wrapper credit-search-box">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="filtroCreditos" class="form-control" placeholder="Buscar por nombre...">
+                        </div>
+                        <button type="button" class="btn-clear-filter" id="btnLimpiarBusquedaCreditos" onclick="limpiarFiltrosCreditos()">Limpiar</button>
+                    </div>
+
+                    <div class="alphabet-header">
+                        <div>
+                            <strong>Buscar por alfabeto</strong>
+                            <span>Toque una letra para ver solo esos clientes.</span>
+                        </div>
+                        <small id="contadorCreditos">0 clientes</small>
+                    </div>
+                    <div class="alphabet-scroll">
+                        <div id="alfabetoCreditos" class="alphabet-bar"></div>
+                    </div>
+                    <p id="creditoFiltroInfo" class="filter-info">Mostrando todos los clientes.</p>
+                </div>
+
+                <div id="listaCreditos" class="clientes-grid"></div>
+                <div id="creditosVacios" class="empty-state redesigned-empty" style="display: none;">
+                    <div class="empty-icon">🔎</div>
+                    <p>No se encontraron clientes.</p>
+                    <span>Cambia la letra, limpia el filtro o registra un nuevo cliente.</span>
                 </div>
             </section>
         </main>
@@ -639,6 +785,142 @@
         let registros = [];
         let ventas = [];
         let abonos = [];
+        let guardandoCliente = false;
+        let guardandoEdicionCliente = false;
+        let letraCreditoActiva = 'TODOS';
+        const LETRAS_CREDITOS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z','#'];
+
+        // --- NORMALIZACIÓN Y CONTROL DE DUPLICADOS DE CLIENTES ---
+        function limpiarTextoNombre(valor) {
+            return (valor || '')
+                .toString()
+                .normalize('NFC')
+                .trim()
+                .replace(/\s+/g, ' ')
+                .toUpperCase();
+        }
+
+        function claveNombreCliente(valor) {
+            return limpiarTextoNombre(valor)
+                .replace(/Ñ/g, '__ENIE__')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/__ENIE__/g, 'Ñ')
+                .replace(/[^A-Z0-9Ñ\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function escaparHTML(valor) {
+            return (valor || '').toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escaparParametroJS(valor) {
+            return (valor || '').toString()
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/\n/g, ' ')
+                .replace(/\r/g, ' ');
+        }
+
+        function generarCodigoCliente() {
+            const fecha = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+            const aleatorio = Math.random().toString(36).slice(2, 6).toUpperCase();
+            return `CLI-${fecha}-${aleatorio}`;
+        }
+
+        function normalizarEmpleado(e) {
+            const nombre = limpiarTextoNombre(e.nombre);
+            return {
+                id: e.id,
+                numEmpleado: e.num_empleado || generarCodigoCliente(),
+                nombre,
+                nombreKey: claveNombreCliente(nombre),
+                cargo: e.cargo || '',
+                tipoContrato: e.tipo_contrato || 'Eventual'
+            };
+        }
+
+        function normalizarVenta(v) {
+            const cliente = limpiarTextoNombre(v.empleado_nombre || v.cliente || v.empleado || '');
+            return {
+                id: v.id,
+                rawDate: new Date(v.created_at),
+                fecha: formatearFechaHora(v.created_at),
+                empleado: cliente,
+                cliente,
+                clienteKey: claveNombreCliente(cliente),
+                tipoPago: v.tipo_pago,
+                productoNombre: v.producto_nombre,
+                cantidad: Number(v.cantidad_total) || 0,
+                total: Number(v.total) || 0,
+                archivado: !!v.archivado
+            };
+        }
+
+        function normalizarAbono(a) {
+            const cliente = limpiarTextoNombre(a.cliente);
+            return {
+                id: a.id,
+                rawDate: new Date(a.created_at),
+                fecha: formatearFechaHora(a.created_at),
+                cliente,
+                clienteKey: claveNombreCliente(cliente),
+                monto: Number(a.monto) || 0,
+                archivado: !!a.archivado
+            };
+        }
+
+        function formatearFechaHora(isoString) {
+            const d = new Date(isoString);
+            return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function buscarClienteLocalPorNombre(nombre, idIgnorado = null) {
+            const key = claveNombreCliente(nombre);
+            if (!key) return null;
+            return registros.find(r => r.nombreKey === key && String(r.id) !== String(idIgnorado || '')) || null;
+        }
+
+        async function refrescarClientesDesdeServidor() {
+            const empActualizados = await supabaseFetch('empleados', 'GET', null, '?select=id,num_empleado,nombre,cargo,tipo_contrato&order=created_at.desc&limit=5000');
+            if (!empActualizados) return false;
+            registros = empActualizados.map(normalizarEmpleado);
+            return true;
+        }
+
+        async function validarNombreClienteDisponible(nombre, idIgnorado = null) {
+            const nombreLimpio = limpiarTextoNombre(nombre);
+            const key = claveNombreCliente(nombreLimpio);
+
+            if (!key) {
+                return { disponible: false, motivo: 'Nombre inválido' };
+            }
+
+            const duplicadoLocal = buscarClienteLocalPorNombre(nombreLimpio, idIgnorado);
+            if (duplicadoLocal) {
+                return { disponible: false, duplicado: duplicadoLocal };
+            }
+
+            // Revisa Supabase justo antes de guardar para evitar duplicados creados desde otro celular/tablet.
+            const sincronizado = await refrescarClientesDesdeServidor();
+            if (!sincronizado) {
+                return { disponible: false, motivo: 'No se pudo comprobar si el cliente existe.' };
+            }
+
+            const duplicadoServidor = buscarClienteLocalPorNombre(nombreLimpio, idIgnorado);
+            if (duplicadoServidor) {
+                return { disponible: false, duplicado: duplicadoServidor };
+            }
+
+            return { disponible: true };
+        }
+
 
         document.addEventListener('DOMContentLoaded', async () => {
             configurarEventosModalesPOS();
@@ -657,14 +939,9 @@
                 supabaseFetch('abonos', 'GET', null, '?select=*&archivado=eq.false&order=created_at.desc&limit=5000')
             ]);
 
-            const formatearFecha = (isoString) => {
-                const d = new Date(isoString);
-                return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
-            };
-
-            if (emp) registros = emp.map(e => ({ id: e.id, numEmpleado: e.num_empleado, nombre: e.nombre.toUpperCase(), cargo: e.cargo, tipoContrato: e.tipo_contrato }));
-            if (ven) ventas = ven.map(v => ({ id: v.id, rawDate: new Date(v.created_at), fecha: formatearFecha(v.created_at), empleado: v.empleado_nombre.toUpperCase(), cliente: v.empleado_nombre.toUpperCase(), tipoPago: v.tipo_pago, productoNombre: v.producto_nombre, cantidad: v.cantidad_total, total: v.total, archivado: v.archivado }));
-            if (abo) abonos = abo.map(a => ({ id: a.id, rawDate: new Date(a.created_at), fecha: formatearFecha(a.created_at), cliente: a.cliente.toUpperCase(), monto: a.monto, archivado: a.archivado }));
+            if (emp) registros = emp.map(normalizarEmpleado);
+            if (ven) ventas = ven.map(normalizarVenta);
+            if (abo) abonos = abo.map(normalizarAbono);
 
             renderizarCreditos();
         }
@@ -719,12 +996,27 @@
         function configurarFiltros() {
             const fCred = document.getElementById('filtroCreditos');
 
-            const aplicarFiltrosCredito = () => {
+            const aplicarFiltrosCredito = debounce(() => {
                 const texto = fCred ? fCred.value : '';
                 renderizarCreditos(texto);
-            };
+            }, 120);
 
             if (fCred) fCred.addEventListener('input', aplicarFiltrosCredito);
+        }
+
+        function limpiarFiltrosCreditos() {
+            const fCred = document.getElementById('filtroCreditos');
+            if (fCred) fCred.value = '';
+            letraCreditoActiva = 'TODOS';
+            renderizarCreditos('');
+        }
+
+        function seleccionarLetraCredito(letra) {
+            letraCreditoActiva = letra || 'TODOS';
+            const fCred = document.getElementById('filtroCreditos');
+            renderizarCreditos(fCred ? fCred.value : '');
+            const lista = document.getElementById('listaCreditos');
+            if (lista) lista.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         /* =========================================
@@ -733,46 +1025,70 @@
         function configurarEventosModalesPOS() {
             const formCli = document.getElementById('formPOSCliente');
             if (formCli) formCli.addEventListener('submit', (e) => { e.preventDefault(); guardarPOSClienteRapido(); });
+            const inputNombreNuevo = document.getElementById('posCliNombre');
+            const inputNombreEditar = document.getElementById('editCliNombre');
+            if (inputNombreNuevo) inputNombreNuevo.addEventListener('blur', () => inputNombreNuevo.value = limpiarTextoNombre(inputNombreNuevo.value));
+            if (inputNombreEditar) inputNombreEditar.addEventListener('blur', () => inputNombreEditar.value = limpiarTextoNombre(inputNombreEditar.value));
         }
 
         function abrirModalPOSCliente() { document.getElementById('modalPOSCliente').classList.add('active'); }
         function cerrarModalPOSCliente() { document.getElementById('modalPOSCliente').classList.remove('active'); document.getElementById('formPOSCliente').reset(); }
 
         async function guardarPOSClienteRapido() {
-            const nombre = document.getElementById('posCliNombre').value.trim().toUpperCase();
-            const montoInicialStr = document.getElementById('posCliMonto').value;
-            const montoInicial = parseFloat(montoInicialStr);
-            const numEmpleado = 'S/N';
-            const tipoContrato = 'Eventual'; 
-            
-            // Verificación de cliente duplicado
-            const existeCliente = registros.some(r => r.nombre === nombre);
-            if (existeCliente) {
-                mostrarMensaje('Error: Este cliente ya está registrado.', 'error');
-                return; // Detiene el proceso para no guardar el duplicado
+            if (guardandoCliente) return;
+
+            const nombreInput = document.getElementById('posCliNombre');
+            const montoInput = document.getElementById('posCliMonto');
+            const nombre = limpiarTextoNombre(nombreInput.value);
+            const montoInicial = parseFloat(montoInput.value);
+            const tipoContrato = 'Eventual';
+
+            nombreInput.value = nombre;
+
+            if (!claveNombreCliente(nombre)) {
+                mostrarMensaje('Escriba un nombre válido para el cliente.', 'error');
+                return;
             }
-            
-            mostrarMensaje('Registrando cliente...', 'warning');
 
-            const empData = { num_empleado: numEmpleado, nombre: nombre, cargo: '', tipo_contrato: tipoContrato };
-            const emp = await supabaseFetch('empleados', 'POST', empData);
+            guardandoCliente = true;
+            mostrarMensaje('Comprobando si el cliente existe...', 'warning');
 
-            if (emp && emp.length) {
-                registros.unshift({ id: emp[0].id, numEmpleado: emp[0].num_empleado, nombre: emp[0].nombre.toUpperCase(), cargo: emp[0].cargo, tipoContrato: emp[0].tipo_contrato });
-                
-                // Si se escribió un monto mayor a 0, registrar la deuda inicial automáticamente
-                if (!isNaN(montoInicial) && montoInicial > 0) {
-                    const vData = { empleado_nombre: nombre, producto_nombre: 'Saldo inicial', cantidad_total: 1, total: montoInicial, tipo_pago: 'Credito' };
-                    const v = await supabaseFetch('ventas', 'POST', vData);
-                    if (v && v.length) {
-                        const d = new Date(v[0].created_at);
-                        ventas.unshift({ id: v[0].id, rawDate: d, fecha: d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}), empleado: v[0].empleado_nombre, cliente: v[0].empleado_nombre, tipoPago: v[0].tipo_pago, productoNombre: v[0].producto_nombre, cantidad: v[0].cantidad_total, total: v[0].total, archivado: v[0].archivado });
-                    }
+            try {
+                const validacion = await validarNombreClienteDisponible(nombre);
+                if (!validacion.disponible) {
+                    const detalle = validacion.duplicado ? ` Ya existe como: ${validacion.duplicado.nombre}` : '';
+                    mostrarMensaje(`No se guardó: este cliente ya existe.${detalle}`, 'error');
+                    return;
                 }
 
-                cerrarModalPOSCliente();
-                mostrarMensaje('Cliente guardado con éxito.', 'success');
-                renderizarCreditos();
+                mostrarMensaje('Registrando cliente...', 'warning');
+
+                const empData = {
+                    num_empleado: generarCodigoCliente(),
+                    nombre,
+                    cargo: '',
+                    tipo_contrato: tipoContrato
+                };
+                const emp = await supabaseFetch('empleados', 'POST', empData);
+
+                if (emp && emp.length) {
+                    registros.unshift(normalizarEmpleado(emp[0]));
+
+                    // Si se escribió un monto mayor a 0, registrar la deuda inicial automáticamente.
+                    if (!isNaN(montoInicial) && montoInicial > 0) {
+                        const vData = { empleado_nombre: nombre, producto_nombre: 'Saldo inicial', cantidad_total: 1, total: montoInicial, tipo_pago: 'Credito' };
+                        const v = await supabaseFetch('ventas', 'POST', vData);
+                        if (v && v.length) {
+                            ventas.unshift(normalizarVenta(v[0]));
+                        }
+                    }
+
+                    cerrarModalPOSCliente();
+                    mostrarMensaje('Cliente guardado con éxito.', 'success');
+                    renderizarCreditos();
+                }
+            } finally {
+                guardandoCliente = false;
             }
         }
 
@@ -793,35 +1109,68 @@
 
         async function guardarEdicionCliente(e) {
             e.preventDefault();
-            const nuevoNombre = document.getElementById('editCliNombre').value.trim().toUpperCase();
+            if (guardandoEdicionCliente) return;
 
-            if (nuevoNombre === clienteAEditar) {
+            const nuevoNombre = limpiarTextoNombre(document.getElementById('editCliNombre').value);
+            document.getElementById('editCliNombre').value = nuevoNombre;
+
+            if (!claveNombreCliente(nuevoNombre)) {
+                mostrarMensaje('Escriba un nombre válido.', 'error');
+                return;
+            }
+
+            const clienteActual = buscarClienteLocalPorNombre(clienteAEditar);
+            const idActual = clienteActual ? clienteActual.id : null;
+
+            if (claveNombreCliente(nuevoNombre) === claveNombreCliente(clienteAEditar)) {
                 cerrarModalEditarCliente();
                 return;
             }
 
-            const existeCliente = registros.some(r => r.nombre === nuevoNombre);
-            if (existeCliente) {
-                mostrarMensaje('Error: Este nombre ya está registrado.', 'error');
-                return;
+            guardandoEdicionCliente = true;
+            mostrarMensaje('Comprobando nombre...', 'warning');
+
+            try {
+                const validacion = await validarNombreClienteDisponible(nuevoNombre, idActual);
+                if (!validacion.disponible) {
+                    const detalle = validacion.duplicado ? ` Ya existe como: ${validacion.duplicado.nombre}` : '';
+                    mostrarMensaje(`No se actualizó: ese nombre ya existe.${detalle}`, 'error');
+                    return;
+                }
+
+                mostrarMensaje('Actualizando nombre...', 'warning');
+
+                // Actualizar en empleados y mantener ventas/abonos con el mismo nombre visible.
+                await supabaseFetch('empleados', 'PATCH', { nombre: nuevoNombre }, `?nombre=eq.${encodeURIComponent(clienteAEditar)}`);
+                await supabaseFetch('ventas', 'PATCH', { empleado_nombre: nuevoNombre }, `?empleado_nombre=eq.${encodeURIComponent(clienteAEditar)}`);
+                await supabaseFetch('abonos', 'PATCH', { cliente: nuevoNombre }, `?cliente=eq.${encodeURIComponent(clienteAEditar)}`);
+
+                registros.forEach(r => {
+                    if (claveNombreCliente(r.nombre) === claveNombreCliente(clienteAEditar)) {
+                        r.nombre = nuevoNombre;
+                        r.nombreKey = claveNombreCliente(nuevoNombre);
+                    }
+                });
+                ventas.forEach(v => {
+                    if (claveNombreCliente(v.cliente) === claveNombreCliente(clienteAEditar)) {
+                        v.cliente = nuevoNombre;
+                        v.empleado = nuevoNombre;
+                        v.clienteKey = claveNombreCliente(nuevoNombre);
+                    }
+                });
+                abonos.forEach(a => {
+                    if (claveNombreCliente(a.cliente) === claveNombreCliente(clienteAEditar)) {
+                        a.cliente = nuevoNombre;
+                        a.clienteKey = claveNombreCliente(nuevoNombre);
+                    }
+                });
+
+                cerrarModalEditarCliente();
+                mostrarMensaje('Nombre actualizado con éxito.', 'success');
+                renderizarCreditos();
+            } finally {
+                guardandoEdicionCliente = false;
             }
-
-            mostrarMensaje('Actualizando nombre...', 'warning');
-
-            // Actualizar en la base de datos (Supabase aplicará el CASCADE a ventas y abonos automáticamente)
-            await supabaseFetch('empleados', 'PATCH', { nombre: nuevoNombre }, `?nombre=eq.${encodeURIComponent(clienteAEditar)}`);
-            
-            // Actualizar localmente para evitar recargar toda la página
-            registros.forEach(r => { if (r.nombre === clienteAEditar) r.nombre = nuevoNombre; });
-            ventas.forEach(v => { 
-                if (v.cliente === clienteAEditar) v.cliente = nuevoNombre; 
-                if (v.empleado === clienteAEditar) v.empleado = nuevoNombre; 
-            });
-            abonos.forEach(a => { if (a.cliente === clienteAEditar) a.cliente = nuevoNombre; });
-
-            cerrarModalEditarCliente();
-            mostrarMensaje('Nombre actualizado con éxito.', 'success');
-            renderizarCreditos();
         }
 
         let clienteAEliminar = null;
@@ -841,17 +1190,24 @@
             if (!clienteAEliminar) return;
 
             const nombre = clienteAEliminar;
+            const keyEliminar = claveNombreCliente(nombre);
             cerrarModalConfirmarEliminar();
 
             mostrarMensaje('Eliminando cliente...', 'warning');
 
-            // Eliminar de la base de datos
-            await supabaseFetch('empleados', 'DELETE', null, `?nombre=eq.${encodeURIComponent(nombre)}`);
+            const nombresRelacionados = new Set([nombre]);
+            registros.forEach(r => { if (r.nombreKey === keyEliminar) nombresRelacionados.add(r.nombre); });
+            ventas.forEach(v => { if (claveNombreCliente(v.cliente) === keyEliminar) nombresRelacionados.add(v.cliente); });
+            abonos.forEach(a => { if (claveNombreCliente(a.cliente) === keyEliminar) nombresRelacionados.add(a.cliente); });
 
-            // Eliminar localmente
-            registros = registros.filter(r => r.nombre !== nombre);
-            ventas = ventas.filter(v => v.cliente !== nombre);
-            abonos = abonos.filter(a => a.cliente !== nombre);
+            for (const nombreExacto of nombresRelacionados) {
+                await supabaseFetch('empleados', 'DELETE', null, `?nombre=eq.${encodeURIComponent(nombreExacto)}`);
+            }
+
+            // Eliminar localmente todas las variantes del mismo nombre normalizado.
+            registros = registros.filter(r => r.nombreKey !== keyEliminar);
+            ventas = ventas.filter(v => claveNombreCliente(v.cliente) !== keyEliminar);
+            abonos = abonos.filter(a => claveNombreCliente(a.cliente) !== keyEliminar);
 
             mostrarMensaje('Cliente eliminado permanentemente.', 'success');
             renderizarCreditos();
@@ -884,12 +1240,11 @@
 
             mostrarMensaje('Procesando cargo...', 'warning');
 
-            const vData = { empleado_nombre: clienteSeleccionadoParaDeuda, producto_nombre: concepto, cantidad_total: 1, total: precio, tipo_pago: 'Credito' };
+            const vData = { empleado_nombre: limpiarTextoNombre(clienteSeleccionadoParaDeuda), producto_nombre: concepto, cantidad_total: 1, total: precio, tipo_pago: 'Credito' };
             const v = await supabaseFetch('ventas', 'POST', vData);
             
             if (v && v.length) {
-                const d = new Date(v[0].created_at);
-                ventas.unshift({ id: v[0].id, rawDate: d, fecha: d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}), empleado: v[0].empleado_nombre, cliente: v[0].empleado_nombre, tipoPago: v[0].tipo_pago, productoNombre: v[0].producto_nombre, cantidad: v[0].cantidad_total, total: v[0].total, archivado: v[0].archivado });
+                        ventas.unshift(normalizarVenta(v[0]));
                 mostrarMensaje(`Cargo agregado a ${clienteSeleccionadoParaDeuda}`, 'success');
             }
 
@@ -898,87 +1253,172 @@
         }
 
         // --- PESTAÑA DE CRÉDITOS ---
+        function obtenerInicialCliente(nombre) {
+            const key = claveNombreCliente(nombre);
+            if (!key) return '#';
+            const inicial = key.charAt(0);
+            return LETRAS_CREDITOS.includes(inicial) && inicial !== '#' ? inicial : '#';
+        }
+
+        function obtenerResumenCreditos() {
+            const deudas = new Map();
+            const asegurarCliente = (nombreBase) => {
+                const nombre = limpiarTextoNombre(nombreBase);
+                const key = claveNombreCliente(nombre);
+                if (!key) return null;
+                if (!deudas.has(key)) {
+                    deudas.set(key, { cliente: nombre, clienteKey: key, inicial: obtenerInicialCliente(nombre), saldo: 0 });
+                }
+                return deudas.get(key);
+            };
+
+            // 1. Cargar todos los clientes registrados sin repetir nombres equivalentes.
+            registros.forEach(r => asegurarCliente(r.nombre));
+
+            // 2. Sumar las deudas de ventas y agrupar variantes del mismo nombre.
+            ventas.forEach(v => {
+                if (v.tipoPago === 'Credito' && !v.archivado) {
+                    const item = asegurarCliente(v.cliente);
+                    if (item) item.saldo += Number(v.total) || 0;
+                }
+            });
+
+            // 3. Restar los pagos de los abonos y agrupar variantes del mismo nombre.
+            abonos.forEach(a => {
+                if (!a.archivado) {
+                    const item = asegurarCliente(a.cliente);
+                    if (item) item.saldo -= Number(a.monto) || 0;
+                }
+            });
+
+            return Array.from(deudas.values()).sort((a, b) => a.cliente.localeCompare(b.cliente, 'es'));
+        }
+
+        function actualizarResumenVisualCreditos(arrCompleta, arrFiltrada) {
+            const totalClientes = arrCompleta.length;
+            const totalPorCobrar = arrCompleta.reduce((acc, item) => acc + Math.max(Number(item.saldo) || 0, 0), 0);
+            const clientesAlDia = arrCompleta.filter(item => (Number(item.saldo) || 0) <= 0.01).length;
+
+            const elClientes = document.getElementById('totalClientesCredito');
+            const elCobrar = document.getElementById('totalPorCobrarCredito');
+            const elAlDia = document.getElementById('totalClientesAlDiaCredito');
+            const contador = document.getElementById('contadorCreditos');
+            const info = document.getElementById('creditoFiltroInfo');
+            const filtroTexto = (document.getElementById('filtroCreditos')?.value || '').trim();
+
+            if (elClientes) elClientes.textContent = totalClientes;
+            if (elCobrar) elCobrar.textContent = `$${totalPorCobrar.toFixed(2)}`;
+            if (elAlDia) elAlDia.textContent = clientesAlDia;
+            if (contador) contador.textContent = `${arrFiltrada.length} de ${totalClientes} clientes`;
+
+            if (info) {
+                const partes = [];
+                if (letraCreditoActiva !== 'TODOS') partes.push(`letra ${letraCreditoActiva}`);
+                if (filtroTexto) partes.push(`búsqueda “${filtroTexto}”`);
+                info.textContent = partes.length ? `Mostrando resultados por ${partes.join(' + ')}.` : 'Mostrando todos los clientes.';
+            }
+        }
+
+        function renderizarAlfabetoCreditos(arrCompleta) {
+            const contenedor = document.getElementById('alfabetoCreditos');
+            if (!contenedor) return;
+
+            const conteos = new Map();
+            LETRAS_CREDITOS.forEach(letra => conteos.set(letra, 0));
+            arrCompleta.forEach(item => conteos.set(item.inicial, (conteos.get(item.inicial) || 0) + 1));
+
+            const botones = [
+                { letra: 'TODOS', texto: 'Todos', conteo: arrCompleta.length },
+                ...LETRAS_CREDITOS.map(letra => ({ letra, texto: letra, conteo: conteos.get(letra) || 0 }))
+            ];
+
+            contenedor.innerHTML = botones.map(btn => {
+                const activo = letraCreditoActiva === btn.letra ? ' active' : '';
+                const claseExtra = btn.letra === 'TODOS' ? ' all' : '';
+                const disabled = btn.letra !== 'TODOS' && btn.conteo === 0 ? ' disabled' : '';
+                return `<button type="button" class="letter-btn${claseExtra}${activo}" onclick="seleccionarLetraCredito('${btn.letra}')"${disabled}>
+                    <span>${btn.texto}</span>
+                    <span class="letter-count">${btn.conteo}</span>
+                </button>`;
+            }).join('');
+        }
+
         function renderizarCreditos(filtroTexto = '') {
             const contenedor = document.getElementById('listaCreditos');
             const emptyState = document.getElementById('creditosVacios');
             if(!contenedor) return;
             contenedor.innerHTML = '';
-            
-            const deudas = {}; 
-            const mapEmpleados = new Map();
-            
-            // 1. Cargar todos los clientes registrados
-            registros.forEach(r => {
-                const nombreLimpio = r.nombre.trim();
-                mapEmpleados.set(nombreLimpio, r);
-                deudas[nombreLimpio] = 0; 
-            });
 
-            // 2. Sumar las deudas de ventas (y añadir clientes faltantes)
-            ventas.forEach(v => { 
-                if (v.tipoPago === 'Credito' && !v.archivado) { 
-                    const cliente = v.cliente.trim();
-                    if (deudas[cliente] === undefined) deudas[cliente] = 0;
-                    deudas[cliente] += v.total; 
-                } 
-            });
+            const arrCompleta = obtenerResumenCreditos();
+            renderizarAlfabetoCreditos(arrCompleta);
 
-            // 3. Restar los pagos de los abonos
-            abonos.forEach(a => { 
-                if (!a.archivado) { 
-                    const cliente = a.cliente.trim();
-                    if (deudas[cliente] === undefined) deudas[cliente] = 0;
-                    deudas[cliente] -= a.monto; 
-                } 
-            });
-            
-            let arrDeudas = Object.keys(deudas).map(c => ({ cliente: c, saldo: deudas[c] }));
-            
-            if(filtroTexto) arrDeudas = arrDeudas.filter(d => d.cliente.toLowerCase().includes(filtroTexto.toLowerCase()));
+            let arrDeudas = [...arrCompleta];
+            const filtroKey = claveNombreCliente(filtroTexto);
+            const filtroLower = (filtroTexto || '').toLowerCase();
 
-            if (arrDeudas.length === 0) { 
-                if(emptyState) emptyState.style.display = 'block'; 
-            } else {
-                if(emptyState) emptyState.style.display = 'none';
-
-                // Ordenar clientes alfabéticamente
-                arrDeudas.sort((a, b) => a.cliente.localeCompare(b.cliente));
-
-                arrDeudas.forEach(d => {
-                    const div = document.createElement('div');
-                    div.className = 'credit-card glass-panel';
-                    
-                    div.innerHTML = `
-                        <div class="credit-info" onclick="abrirModalHistorial('${d.cliente}')" style="flex: 1;">
-                            <div class="flex-between" style="align-items: flex-start; margin-bottom: 0.25rem;">
-                                <h4 class="font-semibold text-main flex-center gap-2" style="justify-content: flex-start; margin-bottom: 0;">
-                                    ${d.cliente} 
-                                </h4>
-                                <div style="display: flex; gap: 0.5rem; margin-right: 0.5rem;">
-                                    <button type="button" class="btn-icon-outline" style="width: 28px; height: 28px; padding: 4px;" onclick="event.stopPropagation(); abrirModalEditarCliente('${d.cliente}')" title="Editar Nombre">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                    </button>
-                                    <button type="button" class="btn-icon-danger" style="width: 28px; height: 28px; padding: 4px; border-radius: 8px;" onclick="event.stopPropagation(); eliminarCliente('${d.cliente}')" title="Eliminar Cliente">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="credit-amount">$${d.saldo.toFixed(2)}</p>
-                            <span class="credit-hint text-primary">Ver historial <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-                        </div>
-                        <div class="credit-actions" style="display: flex; gap: 0.5rem; flex-direction: column; min-width: 100px;">
-                            <button type="button" onclick="event.stopPropagation(); abrirModalNuevaDeuda('${d.cliente}')" class="btn-premium-sm" style="background: var(--primary);">+ Cargo</button>
-                            <button type="button" onclick="event.stopPropagation(); abrirModalAbono('${d.cliente}', ${d.saldo})" class="btn-premium-sm" style="background: var(--success);" ${d.saldo <= 0 ? 'disabled style="opacity: 0.5; background: var(--text-muted);"' : ''}>Abonar</button>
-                        </div>
-                    `;
-                    contenedor.appendChild(div);
-                });
+            if (letraCreditoActiva !== 'TODOS') {
+                arrDeudas = arrDeudas.filter(d => d.inicial === letraCreditoActiva);
             }
+
+            if (filtroTexto) {
+                arrDeudas = arrDeudas.filter(d =>
+                    d.cliente.toLowerCase().includes(filtroLower) ||
+                    d.clienteKey.includes(filtroKey)
+                );
+            }
+
+            actualizarResumenVisualCreditos(arrCompleta, arrDeudas);
+
+            if (arrDeudas.length === 0) {
+                if(emptyState) emptyState.style.display = 'block';
+                return;
+            }
+
+            if(emptyState) emptyState.style.display = 'none';
+
+            arrDeudas.forEach(d => {
+                const div = document.createElement('div');
+                const deudaSaldada = d.saldo <= 0.01;
+                div.className = `credit-card glass-panel${deudaSaldada ? ' debt-free' : ''}`;
+                const clienteHTML = escaparHTML(d.cliente);
+                const clienteJS = escaparParametroJS(d.cliente);
+                const inicialHTML = escaparHTML(d.inicial === '#' ? '•' : d.inicial);
+                const saldoTexto = Math.abs(d.saldo) < 0.005 ? '0.00' : d.saldo.toFixed(2);
+
+                div.innerHTML = `
+                    <div class="client-main" onclick="abrirModalHistorial('${clienteJS}')">
+                        <div class="client-topline">
+                            <span class="client-initial">${inicialHTML}</span>
+                            <div class="client-name-wrap">
+                                <h4 class="client-name" title="${clienteHTML}">${clienteHTML}</h4>
+                                <p class="client-subtitle">${deudaSaldada ? 'Cliente al día' : 'Saldo pendiente'}</p>
+                            </div>
+                        </div>
+                        <p class="credit-amount">$${saldoTexto}</p>
+                        <span class="credit-hint">Ver historial <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                    </div>
+                    <div class="credit-actions">
+                        <div class="quick-icon-actions">
+                            <button type="button" class="btn-icon-outline" onclick="event.stopPropagation(); abrirModalEditarCliente('${clienteJS}')" title="Editar Nombre">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button type="button" class="btn-icon-danger" onclick="event.stopPropagation(); eliminarCliente('${clienteJS}')" title="Eliminar Cliente">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </div>
+                        <button type="button" onclick="event.stopPropagation(); abrirModalNuevaDeuda('${clienteJS}')" class="client-action-btn charge">+ Cargo</button>
+                        <button type="button" onclick="event.stopPropagation(); abrirModalAbono('${clienteJS}', ${d.saldo})" class="client-action-btn pay" ${deudaSaldada ? 'disabled' : ''}>Abonar</button>
+                    </div>
+                `;
+                contenedor.appendChild(div);
+            });
         }
 
         function abrirModalHistorial(cliente) {
-            document.getElementById('modalHistorialNombre').textContent = cliente;
-            const abonosCliente = abonos.filter(a => a.cliente.trim() === cliente && !a.archivado);
+            const clienteNombre = limpiarTextoNombre(cliente);
+            const clienteKey = claveNombreCliente(clienteNombre);
+            document.getElementById('modalHistorialNombre').textContent = clienteNombre;
+            const abonosCliente = abonos.filter(a => claveNombreCliente(a.cliente) === clienteKey && !a.archivado);
             const lista = document.getElementById('listaHistorialAbonos');
             
             if (abonosCliente.length === 0) {
@@ -1000,7 +1440,7 @@
 
         function cerrarModalHistorial() { document.getElementById('modalHistorialAbonos').classList.remove('active'); }
 
-        function abrirModalAbono(c, d) { clienteSeleccionadoParaAbono = c; document.getElementById('modalNombreCliente').textContent = c; document.getElementById('modalDeudaActual').textContent = '$' + d.toFixed(2); document.getElementById('montoAbono').value = ''; document.getElementById('modalAbono').classList.add('active'); }
+        function abrirModalAbono(c, d) { clienteSeleccionadoParaAbono = limpiarTextoNombre(c); document.getElementById('modalNombreCliente').textContent = clienteSeleccionadoParaAbono; document.getElementById('modalDeudaActual').textContent = '$' + d.toFixed(2); document.getElementById('montoAbono').value = ''; document.getElementById('modalAbono').classList.add('active'); }
         function cerrarModal() { document.getElementById('modalAbono').classList.remove('active'); clienteSeleccionadoParaAbono = null; }
         
         async function confirmarAbono() {
@@ -1010,31 +1450,40 @@
                 return;
             }
 
+            const clienteKey = claveNombreCliente(clienteSeleccionadoParaAbono);
             mostrarMensaje('Aprobando pago...', 'warning');
-            
-            const a = await supabaseFetch('abonos', 'POST', { cliente: clienteSeleccionadoParaAbono, monto: monto });
+
+            const a = await supabaseFetch('abonos', 'POST', { cliente: limpiarTextoNombre(clienteSeleccionadoParaAbono), monto: monto });
             if (a && a.length) {
-                const d = new Date(a[0].created_at);
-                abonos.push({ id: a[0].id, rawDate: d, fecha: d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}), cliente: a[0].cliente, monto: a[0].monto, archivado: a[0].archivado });
+                abonos.push(normalizarAbono(a[0]));
             }
-            
-            let deudaRestante = 0; let totalAbonado = 0;
-            ventas.forEach(v => { if (v.tipoPago === 'Credito' && v.cliente.trim() === clienteSeleccionadoParaAbono && !v.archivado) deudaRestante += v.total; });
-            abonos.forEach(ab => { if (ab.cliente.trim() === clienteSeleccionadoParaAbono && !ab.archivado) totalAbonado += ab.monto; });
-            
+
+            let deudaRestante = 0;
+            let totalAbonado = 0;
+            ventas.forEach(v => { if (v.tipoPago === 'Credito' && claveNombreCliente(v.cliente) === clienteKey && !v.archivado) deudaRestante += Number(v.total) || 0; });
+            abonos.forEach(ab => { if (claveNombreCliente(ab.cliente) === clienteKey && !ab.archivado) totalAbonado += Number(ab.monto) || 0; });
+
             if ((deudaRestante - totalAbonado) <= 0.01) {
-                await supabaseFetch('ventas', 'PATCH', { archivado: true }, `?empleado_nombre=eq.${clienteSeleccionadoParaAbono}&archivado=eq.false`);
-                await supabaseFetch('abonos', 'PATCH', { archivado: true }, `?cliente=eq.${clienteSeleccionadoParaAbono}&archivado=eq.false`);
-                ventas.forEach(v => { if (v.tipoPago === 'Credito' && v.cliente.trim() === clienteSeleccionadoParaAbono) v.archivado = true; });
-                abonos.forEach(ab => { if (ab.cliente.trim() === clienteSeleccionadoParaAbono) ab.archivado = true; });
-                
+                const nombresVentas = new Set(ventas.filter(v => claveNombreCliente(v.cliente) === clienteKey).map(v => v.cliente));
+                const nombresAbonos = new Set(abonos.filter(ab => claveNombreCliente(ab.cliente) === clienteKey).map(ab => ab.cliente));
+
+                for (const nombreExacto of nombresVentas) {
+                    await supabaseFetch('ventas', 'PATCH', { archivado: true }, `?empleado_nombre=eq.${encodeURIComponent(nombreExacto)}&archivado=eq.false`);
+                }
+                for (const nombreExacto of nombresAbonos) {
+                    await supabaseFetch('abonos', 'PATCH', { archivado: true }, `?cliente=eq.${encodeURIComponent(nombreExacto)}&archivado=eq.false`);
+                }
+
+                ventas.forEach(v => { if (claveNombreCliente(v.cliente) === clienteKey) v.archivado = true; });
+                abonos.forEach(ab => { if (claveNombreCliente(ab.cliente) === clienteKey) ab.archivado = true; });
+
                 mostrarMensaje('¡Pago aprobado! Deuda saldada en su totalidad.', 'success');
             } else {
                 mostrarMensaje('Pago abonado exitosamente a la cuenta.', 'success');
             }
 
-            cerrarModal(); 
-            renderizarCreditos(); 
+            cerrarModal();
+            renderizarCreditos();
         }
 
         /* =========================================
@@ -1112,13 +1561,8 @@
                 return;
             }
 
-            const formatearFecha = (isoString) => {
-                const d = new Date(isoString);
-                return d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
-            };
-
-            const ventasRango = venRep.map(v => ({ rawDate: new Date(v.created_at), fecha: formatearFecha(v.created_at), cliente: v.empleado_nombre.toUpperCase(), total: v.total, tipoPago: v.tipo_pago, archivado: v.archivado }));
-            const abonosRango = aboRep.map(a => ({ rawDate: new Date(a.created_at), fecha: formatearFecha(a.created_at), cliente: a.cliente.toUpperCase(), monto: a.monto, archivado: a.archivado }));
+            const ventasRango = venRep.map(v => normalizarVenta(v));
+            const abonosRango = aboRep.map(a => normalizarAbono(a));
 
             renderizarReporteConDatos(ventasRango, abonosRango, inicio, fin);
             mostrarMensaje('Reporte generado con éxito', 'success');
@@ -1126,7 +1570,7 @@
 
         function renderizarReporteConDatos(ventasRango, abonosRango, inicio, fin) {
             const mapEmpleados = new Map();
-            registros.forEach(r => mapEmpleados.set(r.nombre, r));
+            registros.forEach(r => mapEmpleados.set(r.nombreKey, r));
 
             const opcionesFecha = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('rangoFechaTexto').innerText = `Desde ${inicio.toLocaleDateString('es-ES', opcionesFecha)} hasta ${fin.toLocaleDateString('es-ES', opcionesFecha)}`;
@@ -1158,8 +1602,9 @@
 
             ventasRango.forEach(v => {
                 const str = obtenerStringFecha(v.rawDate);
-                const cliente = v.cliente || 'Desconocido';
-                const keyDetalle = `${str}|${cliente}`;
+                const cliente = limpiarTextoNombre(v.cliente || 'Desconocido');
+                const keyCliente = claveNombreCliente(cliente);
+                const keyDetalle = `${str}|${keyCliente}`;
 
                 if (!detalleMap.has(keyDetalle)) detalleMap.set(keyDetalle, { fecha: str, cliente: cliente, ventas: 0, cobros: 0 });
                 detalleMap.get(keyDetalle).ventas += v.total;
@@ -1167,8 +1612,9 @@
 
             abonosRango.forEach(a => {
                 const str = obtenerStringFecha(a.rawDate);
-                const cliente = a.cliente || 'Desconocido';
-                const keyDetalle = `${str}|${cliente}`;
+                const cliente = limpiarTextoNombre(a.cliente || 'Desconocido');
+                const keyCliente = claveNombreCliente(cliente);
+                const keyDetalle = `${str}|${keyCliente}`;
 
                 if (!detalleMap.has(keyDetalle)) detalleMap.set(keyDetalle, { fecha: str, cliente: cliente, ventas: 0, cobros: 0 });
                 detalleMap.get(keyDetalle).cobros += a.monto;
@@ -1189,7 +1635,7 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td style="font-weight: 500;">${fechaDisplay}</td>
-                        <td style="font-weight: 600; color: var(--text-main);">${det.cliente}</td>
+                        <td style="font-weight: 600; color: var(--text-main);">${escaparHTML(det.cliente)}</td>
                         <td style="text-align: right; color: var(--text-main); font-weight: 600;">$${det.ventas.toFixed(2)}</td>
                         <td style="text-align: right; color: var(--success); font-weight: 600;">$${det.cobros.toFixed(2)}</td>
                     `;
@@ -1235,3 +1681,4 @@
     </script>
 </body>
 </html>
+
