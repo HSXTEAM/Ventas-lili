@@ -1,0 +1,2731 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d3df5" />
+  <meta name="description" content="App PWA para registrar créditos y abonos de clientes con Supabase." />
+  <title>Cartera de Créditos</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml" />
+
+  <!-- Librería oficial de Supabase desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #6d3df5;
+      --primary-2: #8b2ff5;
+      --primary-soft: #efe9ff;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #171923;
+      --muted: #747987;
+      --line: #e9ebf2;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --shadow: 0 12px 35px rgba(40, 45, 70, .10);
+      --radius: 22px;
+      --bottom-nav-height: 76px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100dvh;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at top left, rgba(109, 61, 245, .12), transparent 34%),
+        var(--bg);
+    }
+
+    .status-bar {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: max(10px, env(safe-area-inset-top)) 14px 6px;
+    }
+
+    .mini-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(23, 25, 35, .74);
+      font-size: 14px;
+      font-weight: 800;
+      min-height: 26px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-dot {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(109, 61, 245, .25);
+    }
+
+    .connection-card {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      width: min(100%, 700px);
+      margin: 0 auto 10px;
+      padding: 12px 16px;
+      color: #fff;
+      border-radius: 10px;
+      background: #1f2937;
+      box-shadow: 0 12px 25px rgba(17, 24, 39, .22);
+      font-weight: 800;
+    }
+
+    .connection-card.show {
+      display: flex;
+    }
+
+    .connection-card .clock {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #f6b23c;
+      color: #f6b23c;
+      border-radius: 50%;
+      font-size: 13px;
+    }
+
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 12px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 18px);
+    }
+
+    .screen {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding-bottom: 18px;
+    }
+
+    .hero {
+      background: rgba(255,255,255,.90);
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 0 0 28px 28px;
+      box-shadow: var(--shadow);
+      padding: 16px 16px 18px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .compact-hero {
+      padding: 10px 14px 12px;
+      margin-bottom: 10px;
+    }
+
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(21px, 5vw, 28px);
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 2px 14px;
+    }
+
+    .title-row.no-action {
+      justify-content: flex-start;
+    }
+
+    .title-row h2 {
+      margin: 0;
+      font-size: clamp(21px, 5vw, 27px);
+      line-height: 1.08;
+      letter-spacing: -.03em;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .title-actions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .home-back-btn {
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border: 1px solid #e5dbff;
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .home-back-btn:active {
+      transform: scale(.98);
+    }
+
+    .primary-btn,
+    .soft-btn,
+    .danger-btn,
+    .ghost-btn {
+      min-height: 54px;
+      padding: 0 18px;
+      border-radius: 18px;
+      font-weight: 900;
+      letter-spacing: -.01em;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .primary-btn:active,
+    .soft-btn:active,
+    .danger-btn:active,
+    .ghost-btn:active,
+    .nav-item:active,
+    .menu-card:active {
+      transform: scale(.98);
+    }
+
+    .primary-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #fff;
+      background: linear-gradient(135deg, #5b48ff, #962bf5);
+      box-shadow: 0 12px 24px rgba(109, 61, 245, .24);
+    }
+
+    .primary-btn .plus {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .mini-primary-btn {
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #fff;
+      background: linear-gradient(135deg, #5b48ff, #962bf5);
+      box-shadow: 0 8px 18px rgba(109, 61, 245, .22);
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .mini-primary-btn .plus-small {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .soft-btn {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .ghost-btn {
+      color: var(--text);
+      background: #f4f5fa;
+      border: 1px solid var(--line);
+    }
+
+    .danger-btn {
+      color: #fff;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(232, 235, 245, .92);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(31, 41, 55, .08);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .menu-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .menu-card {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      min-height: 92px;
+      width: 100%;
+      padding: 18px;
+      text-align: left;
+      border-radius: 24px;
+      background: #fff;
+      border: 1px solid rgba(232, 235, 245, .92);
+      box-shadow: var(--shadow);
+      color: var(--text);
+    }
+
+    .menu-icon,
+    .metric-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 25px;
+      font-weight: 900;
+    }
+
+    .menu-card h3 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -.02em;
+    }
+
+    .menu-card p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .arrow {
+      color: var(--primary);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .search-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field,
+    .textarea {
+      width: 100%;
+      min-height: 56px;
+      border: 1px solid var(--line);
+      outline: 0;
+      border-radius: 16px;
+      background: #f7f8fc;
+      color: var(--text);
+      padding: 0 14px;
+      font-size: 16px;
+      font-weight: 750;
+    }
+
+    .field:focus,
+    .textarea:focus {
+      border-color: rgba(109, 61, 245, .55);
+      box-shadow: 0 0 0 4px rgba(109, 61, 245, .10);
+      background: #fff;
+    }
+
+    .textarea {
+      min-height: 92px;
+      resize: vertical;
+      padding-top: 14px;
+      line-height: 1.35;
+    }
+
+    .field-label {
+      display: block;
+      margin: 0 0 7px 3px;
+      color: #343948;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 13px;
+    }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .form-actions.single {
+      grid-template-columns: 1fr;
+    }
+
+    .alphabet {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .alphabet::-webkit-scrollbar {
+      display: none;
+    }
+
+    .letter-chip,
+    .count-pill,
+    .small-chip {
+      flex: 0 0 auto;
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      background: #f4efff;
+      border: 1px solid #e5dbff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .letter-chip.active {
+      color: #fff;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .count-pill {
+      justify-self: end;
+    }
+
+    .client-list {
+      display: grid;
+      gap: 10px;
+    }
+
+
+    .reference-card {
+      min-height: 240px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .reference-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .reference-head h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+
+    .reference-head p,
+    .reference-empty,
+    .reference-ok,
+    .reference-warning {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .reference-warning {
+      color: #9a5b00;
+      background: #fff5d8;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 11px 12px;
+      margin: 0;
+    }
+
+    .reference-ok {
+      color: #037857;
+      background: #dffcf0;
+      border: 1px solid #b6f5dc;
+      border-radius: 16px;
+      padding: 11px 12px;
+      margin: 0;
+    }
+
+    .reference-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .reference-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 62px;
+      padding: 12px;
+      text-align: left;
+      color: var(--text);
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .reference-item.exact {
+      background: #fff7ed;
+      border-color: #fed7aa;
+    }
+
+    .reference-item strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: -.01em;
+    }
+
+    .reference-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .reference-badge {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .reference-badge.warning {
+      color: #9a5b00;
+      background: #fff5d8;
+    }
+
+    .client-card {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 15px;
+      text-align: left;
+      border-radius: 20px;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(31, 41, 55, .06);
+    }
+
+    .client-row-card {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .client-main-btn {
+      width: 100%;
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      padding: 14px 14px 14px 15px;
+      text-align: left;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .client-main-btn:active {
+      background: #f7f8fc;
+      transform: none;
+    }
+
+    .client-action-stack {
+      min-width: 96px;
+      display: grid;
+      gap: 7px;
+      padding: 10px 12px 10px 0;
+    }
+
+    .client-action-btn {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+      box-shadow: 0 6px 14px rgba(31, 41, 55, .08);
+    }
+
+    .client-action-btn.credito {
+      color: #fff;
+      background: linear-gradient(135deg, #5b48ff, #962bf5);
+    }
+
+    .client-action-btn.abono {
+      color: #037857;
+      background: #dffcf0;
+    }
+
+    .client-card h3,
+    .record-card h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -.01em;
+    }
+
+    .client-meta,
+    .record-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .client-meta.pending-balance,
+    .client-meta.pending-balance b,
+    .client-meta.pending-balance .client-status-text {
+      color: #b91c1c !important;
+    }
+
+    .client-meta.paid-balance,
+    .client-meta.paid-balance b,
+    .client-meta.paid-balance .client-status-text {
+      color: #037857 !important;
+    }
+
+    .client-status-text {
+      font-weight: 950;
+    }
+
+    .money {
+      font-weight: 950;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+    }
+
+    .status {
+      min-width: 92px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .status.pending {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    .status.paid {
+      color: #037857;
+      background: #dffcf0;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card {
+      min-height: 112px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(31, 41, 55, .06);
+    }
+
+    .metric-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .metric-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .metric-card strong {
+      display: block;
+      margin-top: 9px;
+      font-size: clamp(21px, 6vw, 30px);
+      letter-spacing: -.04em;
+    }
+
+    .detail-header {
+      display: grid;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .detail-header h2 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -.04em;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .quick-actions button {
+      min-height: 48px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .record-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      margin-bottom: 10px;
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .record-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .table-card {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    .data-table th {
+      color: #343948;
+      background: #f7f8fc;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .data-table .amount-cell {
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 7px;
+      justify-content: flex-end;
+    }
+
+    .icon-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .icon-btn.danger {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 26px 12px;
+      color: var(--muted);
+      font-weight: 850;
+    }
+
+    .section-title {
+      margin: 18px 3px 10px;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      min-height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+      background: linear-gradient(135deg, #5b48ff, #6d3df5);
+      box-shadow: 0 -12px 30px rgba(109, 61, 245, .28);
+    }
+
+    .nav-inner {
+      width: min(100%, 760px);
+      height: 60px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      border-radius: 18px;
+      color: rgba(255,255,255,.67);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .nav-item.active {
+      color: #fff;
+      background: rgba(255,255,255,.14);
+    }
+
+    .nav-ico {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: calc(env(safe-area-inset-top) + 12px);
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      padding: 0 12px;
+    }
+
+    .toast {
+      width: min(100%, 560px);
+      transform: translateY(-120%);
+      opacity: 0;
+      transition: .24s ease;
+      border-radius: 16px;
+      padding: 13px 15px;
+      color: #fff;
+      background: #1f2937;
+      box-shadow: 0 16px 35px rgba(17, 24, 39, .24);
+      font-weight: 850;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { background: #047857; }
+    .toast.error { background: #b91c1c; }
+    .toast.warning { background: #9a5b00; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 14px;
+      background: rgba(15, 23, 42, .42);
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(100%, 620px);
+      max-height: min(82dvh, 720px);
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.22);
+    }
+
+    .modal h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      letter-spacing: -.03em;
+    }
+
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .backup-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+
+
+    .dashboard-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .dashboard-hero-card {
+      min-height: 158px;
+      display: grid;
+      align-content: center;
+      gap: 9px;
+      padding: 20px;
+      border-radius: 28px;
+      color: #fff;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.22), transparent 36%),
+        linear-gradient(135deg, #5b48ff, #962bf5);
+      box-shadow: 0 16px 34px rgba(109, 61, 245, .28);
+    }
+
+    .dashboard-hero-card span {
+      font-size: 13px;
+      font-weight: 950;
+      opacity: .88;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .dashboard-hero-card strong {
+      display: block;
+      font-size: clamp(34px, 10vw, 54px);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+
+    .dashboard-hero-card p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 850;
+      opacity: .9;
+    }
+
+    .dashboard-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dashboard-kpi {
+      min-height: 104px;
+      display: grid;
+      align-content: space-between;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(31, 41, 55, .06);
+    }
+
+    .dashboard-kpi span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .dashboard-kpi strong {
+      display: block;
+      font-size: clamp(20px, 5.6vw, 28px);
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .dashboard-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .dashboard-section-head h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+
+    .dashboard-section-head .small-chip {
+      flex: 0 0 auto;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eceef6;
+      border: 1px solid #e2e5ef;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(135deg, var(--success), #34d399);
+    }
+
+    .progress-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .progress-meta div {
+      min-height: 64px;
+      padding: 12px;
+      border-radius: 18px;
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+    }
+
+    .progress-meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+      margin-bottom: 6px;
+    }
+
+    .progress-meta strong {
+      font-size: 18px;
+      letter-spacing: -.03em;
+    }
+
+    .dashboard-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .dashboard-client-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 64px;
+      padding: 12px;
+      text-align: left;
+      color: var(--text);
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .dashboard-client-row strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: -.01em;
+    }
+
+    .dashboard-client-row span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .dashboard-amount {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .dashboard-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+
+    .donut-dashboard {
+      display: grid;
+      gap: 14px;
+    }
+
+    .donut-card {
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .donut-card h3 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.03em;
+    }
+
+    .donut-chart {
+      width: min(72vw, 280px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      box-shadow: 0 14px 32px rgba(31, 41, 55, .12);
+    }
+
+    .donut-center {
+      width: 56%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: inset 0 0 0 10px #f7f8fc;
+      font-size: 42px;
+    }
+
+    .donut-legend {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .donut-legend span {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      border-radius: 999px;
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+      color: #343948;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .legend-dot.success { background: var(--success); }
+    .legend-dot.warning { background: var(--warning); }
+
+    @media (min-width: 720px) {
+      .dashboard-kpi-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .offline-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 12px;
+      text-align: center;
+      color: #7c2d12;
+      background: #ffedd5;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .offline-banner.show {
+      display: flex;
+    }
+
+    @media (min-width: 720px) {
+      .main-scroll {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .menu-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .menu-card {
+        min-height: 190px;
+        grid-template-columns: 1fr;
+        align-content: space-between;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .metric-card.full {
+        grid-column: auto;
+      }
+
+      .modal-backdrop {
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .hero,
+      .card {
+        padding-left: 13px;
+        padding-right: 13px;
+      }
+
+      .client-action-stack {
+        min-width: 86px;
+        padding-right: 10px;
+      }
+
+      .client-action-btn {
+        padding: 0 10px;
+        font-size: 11px;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="offline-banner" id="offlineBanner">⚠️ Sin internet: necesitas conexión para guardar en Supabase.</div>
+
+    <header class="status-bar">
+      <div class="mini-header">
+        <div class="brand">
+          <span class="brand-dot">💳</span>
+          <span>Ventas lili</span>
+        </div>
+        <span id="smallStatus">Listo</span>
+      </div>
+    </header>
+
+    <div class="connection-card" id="connectionCard">
+      <span class="clock">◷</span>
+      <span id="connectionText">Conectando al sistema...</span>
+    </div>
+
+    <main class="main-scroll" id="mainScroll">
+      <section class="screen" id="appScreen"></section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <div class="nav-inner">
+        <button class="nav-item active" data-nav="menu" type="button">
+          <span class="nav-ico">⌂</span>
+          <span>Inicio</span>
+        </button>
+        <button class="nav-item" data-nav="clientes" type="button">
+          <span class="nav-ico">👥</span>
+          <span>Clientes</span>
+        </button>
+        <button class="nav-item" data-nav="resumen" type="button">
+          <span class="nav-ico">▥</span>
+          <span>Resumen</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <div class="toast-wrap"><div class="toast" id="toast"></div></div>
+  <div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal"></div></div>
+  <input class="file-input" id="importFile" type="file" accept="application/json,.json" />
+
+  <script>
+    const APP_BUILD = 'dashboard-util-2026-06-11-v1';
+    /********************************************************************
+     * CONFIGURACIÓN SUPABASE
+     * 1) Entra a Supabase > Project Settings > API.
+     * 2) Copia tu Project URL en SUPABASE_URL.
+     * 3) Copia tu anon public key en SUPABASE_ANON_KEY.
+     ********************************************************************/
+    const SUPABASE_URL = 'https://roqeubrussnnwkgxarpd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcWV1YnJ1c3NubndrZ3hhcnBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyNDUyOTIsImV4cCI6MjA5MzgyMTI5Mn0.kdv74W1IrQbrogTKx699rafHK-y95Y93uSit1kh9i0E';
+
+    let db = null;
+
+    const state = {
+      view: 'menu',
+      clientes: [],
+      creditos: [],
+      abonos: [],
+      selectedClienteId: null,
+      search: '',
+      letter: '',
+      loading: false
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const screen = $('#appScreen');
+    const mainScroll = $('#mainScroll');
+    const connectionCard = $('#connectionCard');
+    const connectionText = $('#connectionText');
+    const smallStatus = $('#smallStatus');
+    const offlineBanner = $('#offlineBanner');
+    const importFile = $('#importFile');
+
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    async function initApp() {
+      setupPWA();
+      setupNavigation();
+      setupNetworkListeners();
+      renderMenu();
+
+      if (!validConfig()) {
+        showToast('Coloca tu SUPABASE_URL y SUPABASE_ANON_KEY en el index.html.', 'warning', 5200);
+        smallStatus.textContent = 'Configurar';
+        return;
+      }
+
+      if (!window.supabase) {
+        showToast('No cargó la librería de Supabase. Revisa tu conexión a internet.', 'error', 5200);
+        smallStatus.textContent = 'Sin conexión';
+        return;
+      }
+
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      await loadData(true);
+    }
+
+    function validConfig() {
+      return SUPABASE_URL.startsWith('https://') &&
+        !SUPABASE_URL.includes('COLOCA_AQUI') &&
+        SUPABASE_ANON_KEY.length > 40 &&
+        !SUPABASE_ANON_KEY.includes('COLOCA_AQUI');
+    }
+
+    function setupPWA() {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register(`service-worker.js?v=${APP_BUILD}`);
+            await registration.update();
+          } catch (error) {
+            console.warn('No se pudo registrar el service worker.', error);
+          }
+        });
+      }
+    }
+
+    function setupNavigation() {
+      document.querySelectorAll('[data-nav]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.nav;
+          if (target === 'menu') renderMenu();
+          if (target === 'clientes') renderClientes();
+          if (target === 'resumen') renderResumen();
+        });
+      });
+    }
+
+    function setupNetworkListeners() {
+      const updateOnline = () => {
+        const offline = !navigator.onLine;
+        offlineBanner.classList.toggle('show', offline);
+        smallStatus.textContent = offline ? 'Offline' : (state.loading ? 'Cargando' : 'Listo');
+      };
+      window.addEventListener('online', () => {
+        updateOnline();
+        showToast('Conexión recuperada. Actualizando datos...', 'success');
+        loadData(false);
+      });
+      window.addEventListener('offline', updateOnline);
+      updateOnline();
+    }
+
+    async function loadData(showConnecting = false) {
+      if (!db) return;
+      if (!navigator.onLine) {
+        showToast('Sin internet. Necesitas conexión para consultar o guardar en Supabase.', 'warning');
+        return;
+      }
+
+      setLoading(true, showConnecting ? 'Conectando al sistema...' : 'Actualizando datos...');
+
+      try {
+        const [clientesRes, creditosRes, abonosRes] = await Promise.all([
+          db.from('clientes').select('*').order('nombre', { ascending: true }),
+          db.from('creditos').select('*').order('fecha', { ascending: false }),
+          db.from('abonos').select('*').order('fecha', { ascending: false })
+        ]);
+
+        throwIfError(clientesRes.error);
+        throwIfError(creditosRes.error);
+        throwIfError(abonosRes.error);
+
+        state.clientes = clientesRes.data || [];
+        state.creditos = creditosRes.data || [];
+        state.abonos = abonosRes.data || [];
+
+        if (state.view === 'clientes') renderClientes(false);
+        if (state.view === 'resumen') renderResumen(false);
+        if (state.view === 'detalle') renderDetalleCliente(state.selectedClienteId, false);
+        if (state.view === 'menu') renderMenu(false);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo conectar con Supabase.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function throwIfError(error) {
+      if (error) throw new Error(error.message || 'Error de Supabase');
+    }
+
+    function setLoading(isLoading, text = 'Cargando...') {
+      state.loading = isLoading;
+      connectionText.textContent = text;
+      connectionCard.classList.toggle('show', isLoading);
+      smallStatus.textContent = isLoading ? 'Cargando' : (navigator.onLine ? 'Listo' : 'Offline');
+    }
+
+    function setActiveNav(view) {
+      document.querySelectorAll('[data-nav]').forEach((btn) => {
+        const key = btn.dataset.nav;
+        const active =
+          (view === 'menu' && key === 'menu') ||
+          (['clientes', 'detalle', 'nuevoCredito', 'nuevoCliente', 'creditoExistente', 'abono', 'editarCliente', 'editarCredito', 'editarAbono'].includes(view) && key === 'clientes') ||
+          (view === 'resumen' && key === 'resumen');
+        btn.classList.toggle('active', active);
+      });
+    }
+
+    function resetScroll() {
+      requestAnimationFrame(() => mainScroll.scrollTo({ top: 0, behavior: 'instant' }));
+    }
+
+    function renderShell(title, subtitle = '', actionHTML = '') {
+      const extraAction = String(actionHTML || '').trim();
+      const backAction = state.view !== 'menu'
+        ? `<button class="home-back-btn" type="button" onclick="renderMenu()">← Volver</button>`
+        : '';
+      const actionsHTML = [backAction, extraAction].filter(Boolean).join('');
+      const hasAction = Boolean(actionsHTML);
+      return `
+        <div class="hero compact-hero">
+          <h1>Cartera de Créditos</h1>
+        </div>
+        <div class="title-row ${hasAction ? '' : 'no-action'}">
+          <div>
+            <h2>${escapeHTML(title)}</h2>
+            ${subtitle ? `<p class="subtitle">${escapeHTML(subtitle)}</p>` : ''}
+          </div>
+          ${hasAction ? `<div class="title-actions">${actionsHTML}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderMenu(scroll = true) {
+      state.view = 'menu';
+      state.selectedClienteId = null;
+      setActiveNav('menu');
+      const totals = calculateTotals();
+      screen.innerHTML = `
+        ${renderShell('Menú principal', 'Solo lo necesario para registrar, revisar y resumir.')}
+        <div class="menu-grid">
+          <button class="menu-card" type="button" onclick="renderClientes()">
+            <span class="menu-icon">👥</span>
+            <span>
+              <h3>Clientes</h3>
+              <p>${state.clientes.length} registrados.</p>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+          <button class="menu-card" type="button" onclick="renderNuevoCliente('menu')">
+            <span class="menu-icon">＋</span>
+            <span>
+              <h3>Nuevo cliente</h3>
+              <p>Registrar cliente nuevo.</p>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+          <button class="menu-card" type="button" onclick="renderResumen()">
+            <span class="menu-icon">▥</span>
+            <span>
+              <h3>Resumen</h3>
+              <p>Pendiente: ${money(totals.totalPendiente)}</p>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+        </div>
+      `;
+      if (scroll) resetScroll();
+    }
+
+    function renderNuevoCredito() {
+      state.view = 'nuevoCredito';
+      setActiveNav('clientes');
+
+      const clientesOrdenados = state.clientes
+        .slice()
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+
+      const listHTML = clientesOrdenados.length
+        ? clientesOrdenados.map(renderClienteCreditoCard).join('')
+        : `<div class="card empty">Todavía no hay clientes registrados.</div>`;
+
+      screen.innerHTML = `
+        ${renderShell('Nuevo crédito', 'Selecciona un cliente registrado.', `
+          <button class="mini-primary-btn" type="button" onclick="renderNuevoCliente()">
+            <span class="plus-small">+</span>
+            <span>Nuevo cliente</span>
+          </button>
+        `)}
+        <h3 class="section-title">Clientes registrados</h3>
+        <div class="client-list">${listHTML}</div>
+      `;
+      resetScroll();
+    }
+
+    function renderClienteCreditoCard(cliente) {
+      const summary = getClienteSummary(cliente.id);
+      return `
+        <button class="client-card" type="button" onclick="renderCreditoExistente('${cliente.id}')">
+          <span>
+            <h3>${escapeHTML(cliente.nombre)}</h3>
+            <div class="client-meta">Adeuda: <b>${money(Math.max(summary.pendiente, 0))}</b></div>
+          </span>
+          <span class="status pending">Agregar</span>
+        </button>
+      `;
+    }
+
+    function renderCreditoExistente(clienteId) {
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) return renderNuevoCredito();
+
+      state.view = 'creditoExistente';
+      state.selectedClienteId = clienteId;
+      setActiveNav('clientes');
+
+      screen.innerHTML = `
+        ${renderShell('Agregar crédito', `Cliente: ${cliente.nombre}`)}
+        <form class="card form-grid" onsubmit="guardarCreditoExistente(event, '${clienteId}')">
+          <label>
+            <span class="field-label">Monto total del crédito *</span>
+            <input class="field" name="monto" inputmode="decimal" required placeholder="0.00" />
+          </label>
+
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="renderNuevoCredito()">Volver</button>
+            <button class="primary-btn" type="submit">Guardar crédito</button>
+          </div>
+        </form>
+      `;
+      resetScroll();
+    }
+
+    function renderNuevoCliente(returnTo = 'nuevoCredito') {
+      state.view = 'nuevoCliente';
+      setActiveNav('clientes');
+
+      const volverAction = returnTo === 'menu' ? 'renderMenu()' : 'renderNuevoCredito()';
+
+      screen.innerHTML = `
+        ${renderShell('Nuevo cliente', 'Solo agrega clientes que no estén registrados.')}
+        <form class="card form-grid" onsubmit="guardarNuevoClienteConCredito(event)">
+          <label>
+            <span class="field-label">Nombre del cliente *</span>
+            <input class="field" id="nuevoClienteNombre" name="nombre" autocomplete="off" required placeholder="Ej: María López" oninput="updateClientNameReferences(this.value)" onfocus="updateClientNameReferences(this.value)" />
+          </label>
+
+          <label>
+            <span class="field-label">Monto total del crédito *</span>
+            <input class="field" name="monto" inputmode="decimal" required placeholder="0.00" />
+          </label>
+
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="${volverAction}">Volver</button>
+            <button class="primary-btn" type="submit">Guardar cliente</button>
+          </div>
+        </form>
+
+        <section class="card reference-card" id="nameReferences">
+          <div class="reference-head">
+            <div>
+              <h3>🧾 Referencias del directorio</h3>
+              <p>Escribe el nombre arriba y aquí aparecerán clientes parecidos para evitar duplicados.</p>
+            </div>
+            <span class="small-chip">${state.clientes.length} clientes</span>
+          </div>
+          <div class="reference-empty">Empieza a escribir el nombre del cliente.</div>
+        </section>
+      `;
+      updateClientNameReferences('');
+      resetScroll();
+    }
+
+    function updateClientNameReferences(value = '') {
+      const box = $('#nameReferences');
+      if (!box) return;
+
+      const totalClientes = state.clientes.length;
+      const nombre = cleanText(value);
+      const matches = getClientNameReferenceMatches(nombre);
+      const hasExactMatch = matches.some(match => match.exact);
+
+      if (!totalClientes) {
+        box.innerHTML = `
+          <div class="reference-head">
+            <div>
+              <h3>🧾 Referencias del directorio</h3>
+              <p>Cuando tengas clientes guardados, aquí aparecerán las coincidencias.</p>
+            </div>
+            <span class="small-chip">0 clientes</span>
+          </div>
+          <div class="reference-empty">Todavía no hay clientes registrados.</div>
+        `;
+        return;
+      }
+
+      if (!nombre) {
+        box.innerHTML = `
+          <div class="reference-head">
+            <div>
+              <h3>🧾 Referencias del directorio</h3>
+              <p>Escribe el nombre arriba y aquí aparecerán clientes parecidos para evitar duplicados.</p>
+            </div>
+            <span class="small-chip">${totalClientes} clientes</span>
+          </div>
+          <div class="reference-empty">Empieza a escribir el nombre del cliente.</div>
+        `;
+        return;
+      }
+
+      if (!matches.length) {
+        box.innerHTML = `
+          <div class="reference-head">
+            <div>
+              <h3>🧾 Referencias del directorio</h3>
+              <p>Buscando coincidencias para: <b>${escapeHTML(nombre)}</b></p>
+            </div>
+            <span class="small-chip">0 similares</span>
+          </div>
+          <div class="reference-ok">✅ No encontré clientes parecidos en el directorio.</div>
+        `;
+        return;
+      }
+
+      box.innerHTML = `
+        <div class="reference-head">
+          <div>
+            <h3>🧾 Referencias del directorio</h3>
+            <p>Coincidencias encontradas para: <b>${escapeHTML(nombre)}</b></p>
+          </div>
+          <span class="small-chip">${matches.length} similares</span>
+        </div>
+        ${hasExactMatch ? `<div class="reference-warning">⚠️ Este nombre parece que ya existe. Toca el cliente de la lista para agregarle crédito sin duplicarlo.</div>` : ''}
+        <div class="reference-list">
+          ${matches.map(renderNameReferenceItem).join('')}
+        </div>
+      `;
+    }
+
+    function getClientNameReferenceMatches(value) {
+      const term = normalizeText(value);
+      if (!term) return [];
+
+      const termWords = term.split(/\s+/).filter(Boolean);
+      return state.clientes
+        .map(cliente => {
+          const name = normalizeText(cliente.nombre);
+          const nameWords = name.split(/\s+/).filter(Boolean);
+          const exact = name === term;
+          const starts = name.startsWith(term);
+          const includes = name.includes(term);
+          const wordMatches = termWords.filter(word => word.length >= 2 && name.includes(word)).length;
+          const partialWordMatch = termWords.some(word =>
+            word.length >= 3 && nameWords.some(nameWord => nameWord.startsWith(word) || word.startsWith(nameWord))
+          );
+          const firstLetterMatch = term.length === 1 && name.startsWith(term);
+
+          let score = 0;
+          if (exact) score += 100;
+          if (starts) score += 70;
+          if (includes) score += 45;
+          if (partialWordMatch) score += 25;
+          score += wordMatches * 14;
+          if (firstLetterMatch) score += 10;
+
+          return { cliente, score, exact };
+        })
+        .filter(match => match.score > 0)
+        .sort((a, b) => b.score - a.score || a.cliente.nombre.localeCompare(b.cliente.nombre, 'es'))
+        .slice(0, 8);
+    }
+
+    function renderNameReferenceItem(match) {
+      const cliente = match.cliente;
+      const summary = getClienteSummary(cliente.id);
+      return `
+        <button class="reference-item ${match.exact ? 'exact' : ''}" type="button" onclick="renderCreditoExistente('${cliente.id}')">
+          <span>
+            <strong>${escapeHTML(cliente.nombre)}</strong>
+            <span>Adeuda: <b>${money(Math.max(summary.pendiente, 0))}</b> · Tocar para usar este cliente</span>
+          </span>
+          <em class="reference-badge ${match.exact ? 'warning' : ''}">${match.exact ? 'Ya existe' : 'Referencia'}</em>
+        </button>
+      `;
+    }
+
+    async function guardarCreditoExistente(event, clienteId) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) return renderNuevoCredito();
+
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form));
+      const monto = parseAmount(data.monto);
+
+      if (!isValidMoney(monto)) return showToast('Escribe un monto válido.', 'warning');
+
+      setLoading(true, 'Guardando crédito...');
+
+      try {
+        const { error: creditoError } = await db.from('creditos').insert({
+          cliente_id: cliente.id,
+          monto
+        });
+        throwIfError(creditoError);
+
+        showToast('Crédito guardado correctamente. ✅', 'success');
+        await loadData(false);
+        renderDetalleCliente(cliente.id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo guardar el crédito.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function guardarNuevoClienteConCredito(event) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form));
+      const nombre = cleanText(data.nombre);
+      const monto = parseAmount(data.monto);
+
+      if (!nombre) return showToast('Escribe el nombre del cliente.', 'warning');
+      if (!isValidMoney(monto)) return showToast('Escribe un monto válido.', 'warning');
+
+      setLoading(true, 'Guardando cliente...');
+
+      try {
+        const existente = await findClienteByName(nombre);
+        if (existente) {
+          showToast('Ese cliente ya está registrado. Selecciónalo desde la lista.', 'warning', 5200);
+          renderCreditoExistente(existente.id);
+          return;
+        }
+
+        const { data: cliente, error } = await db
+          .from('clientes')
+          .insert({ nombre })
+          .select()
+          .single();
+        throwIfError(error);
+
+        const { error: creditoError } = await db.from('creditos').insert({
+          cliente_id: cliente.id,
+          monto
+        });
+        throwIfError(creditoError);
+
+        showToast('Cliente y crédito guardados correctamente. ✅', 'success');
+        await loadData(false);
+        renderDetalleCliente(cliente.id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo guardar el cliente.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function findClienteByName(nombre) {
+      const { data, error } = await db
+        .from('clientes')
+        .select('*')
+        .ilike('nombre', nombre)
+        .limit(1)
+        .maybeSingle();
+      throwIfError(error);
+      return data;
+    }
+
+    function renderClientes(scroll = true) {
+      state.view = 'clientes';
+      setActiveNav('clientes');
+
+      const filtered = getFilteredClientes();
+      const letters = ['Todos', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+      const alphabetHTML = letters.map(letter => {
+        const value = letter === 'Todos' ? '' : letter;
+        const active = state.letter === value;
+        return `<button class="letter-chip ${active ? 'active' : ''}" type="button" onclick="setLetter('${value}')">${letter}</button>`;
+      }).join('');
+
+      const listHTML = filtered.length
+        ? filtered.map(renderClienteCard).join('')
+        : `<div class="card empty">No hay clientes para mostrar.</div>`;
+
+      screen.innerHTML = `
+        ${renderShell('Clientes', 'Busca por nombre o por alfabeto.')}
+        <div class="card search-card">
+          <div class="search-row">
+            <input class="field" id="searchInput" value="${escapeAttr(state.search)}" oninput="setSearch(this.value)" placeholder="🔍 Buscar por nombre..." />
+            <button class="ghost-btn" type="button" onclick="clearSearch()">Limpiar</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr auto; align-items:center; gap:10px;">
+            <strong>Buscar por alfabeto</strong>
+            <span class="count-pill">${filtered.length} clientes</span>
+          </div>
+          <div class="alphabet">${alphabetHTML}</div>
+        </div>
+        <div class="client-list">${listHTML}</div>
+      `;
+
+      const input = $('#searchInput');
+      if (input) {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') e.preventDefault();
+        });
+      }
+      if (scroll) resetScroll();
+    }
+
+    function setSearch(value) {
+      state.search = value;
+      renderClientes(false);
+      const input = $('#searchInput');
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    }
+
+    function setLetter(letter) {
+      state.letter = letter;
+      renderClientes(false);
+    }
+
+    function clearSearch() {
+      state.search = '';
+      state.letter = '';
+      renderClientes(false);
+    }
+
+    function getFilteredClientes() {
+      const term = normalizeText(state.search);
+      return state.clientes
+        .slice()
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
+        .filter(cliente => {
+          const name = normalizeText(cliente.nombre);
+          const matchTerm = !term || name.includes(term);
+          const matchLetter = !state.letter || name.startsWith(normalizeText(state.letter));
+          return matchTerm && matchLetter;
+        });
+    }
+
+    function renderClienteCard(cliente) {
+      const summary = getClienteSummary(cliente.id);
+      const pendiente = Math.max(Number(summary.pendiente || 0), 0);
+      const isPaid = pendiente <= 0;
+      const status = isPaid ? 'Pagado' : 'Pendiente';
+      const metaClass = isPaid ? 'paid-balance' : 'pending-balance';
+      return `
+        <div class="client-card client-row-card">
+          <button class="client-main-btn" type="button" onclick="renderDetalleCliente('${cliente.id}')" aria-label="Ver detalle de ${escapeAttr(cliente.nombre)}">
+            <span>
+              <h3>${escapeHTML(cliente.nombre)}</h3>
+              <div class="client-meta ${metaClass}">
+                Adeuda: <b>${money(pendiente)}</b> · <span class="client-status-text">${status}</span>
+              </div>
+            </span>
+          </button>
+          <div class="client-action-stack" aria-label="Acciones de ${escapeAttr(cliente.nombre)}">
+            <button class="client-action-btn abono" type="button" onclick="renderAgregarAbono('${cliente.id}')">Abono</button>
+            <button class="client-action-btn credito" type="button" onclick="renderCreditoExistente('${cliente.id}')">Crédito</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDetalleCliente(clienteId, scroll = true) {
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) {
+        showToast('No se encontró el cliente.', 'error');
+        return renderClientes();
+      }
+
+      state.view = 'detalle';
+      state.selectedClienteId = clienteId;
+      setActiveNav('clientes');
+
+      const summary = getClienteSummary(clienteId);
+      const abonos = state.abonos.filter(a => a.cliente_id === clienteId);
+      const isPaid = Math.max(Number(summary.pendiente || 0), 0) <= 0;
+
+      screen.innerHTML = `
+        ${renderShell('Detalle del cliente', 'Abonos y saldo pendiente.')}
+        <div class="card detail-header">
+          <h2>${escapeHTML(cliente.nombre)}</h2>
+          <span class="status ${isPaid ? 'paid' : 'pending'}">${isPaid ? 'Pagado' : 'Pendiente'}</span>
+          <div class="quick-actions">
+            <button class="primary-btn" type="button" onclick="renderAgregarAbono('${clienteId}')">Agregar abono</button>
+            <button class="soft-btn" type="button" onclick="renderEditarCliente('${clienteId}')">Editar</button>
+            <button class="danger-btn" type="button" onclick="eliminarCliente('${clienteId}')">Eliminar</button>
+          </div>
+        </div>
+
+        <div class="metrics-grid" style="grid-template-columns: 1fr;">
+          <div class="metric-card full"><span>Saldo pendiente</span><strong>${money(Math.max(summary.pendiente, 0))}</strong></div>
+        </div>
+
+        <h3 class="section-title">Historial de abonos</h3>
+        ${abonos.length ? renderAbonosTable(abonos) : `<div class="card empty">Todavía no hay abonos.</div>`}
+      `;
+      if (scroll) resetScroll();
+    }
+
+    function renderCreditoRecord(credito) {
+      return `
+        <div class="record-card">
+          <div class="record-top">
+            <span>
+              <h3>${money(Number(credito.monto))}</h3>
+              <div class="record-meta">
+                ${formatDate(credito.fecha)}
+              </div>
+            </span>
+            <span class="small-chip">Crédito</span>
+          </div>
+          <div class="record-actions">
+            <button class="icon-btn" type="button" onclick="renderEditarCredito('${credito.id}')">Editar</button>
+            <button class="icon-btn danger" type="button" onclick="eliminarCredito('${credito.id}')">Eliminar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAbonosTable(abonos) {
+      return `
+        <div class="card table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Nota</th>
+                <th style="text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${abonos.map(renderAbonoTableRow).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAbonoTableRow(abono) {
+      return `
+        <tr>
+          <td>${formatDate(abono.fecha)}</td>
+          <td class="amount-cell">${money(Number(abono.monto))}</td>
+          <td>${abono.nota ? escapeHTML(abono.nota) : '—'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="icon-btn" type="button" onclick="renderEditarAbono('${abono.id}')">Editar</button>
+              <button class="icon-btn danger" type="button" onclick="eliminarAbono('${abono.id}')">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderAgregarAbono(clienteId) {
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) return renderClientes();
+      const summary = getClienteSummary(clienteId);
+      state.view = 'abono';
+      setActiveNav('clientes');
+      screen.innerHTML = `
+        ${renderShell('Agregar abono', `Cliente: ${cliente.nombre}`)}
+        <form class="card form-grid" onsubmit="guardarAbono(event, '${clienteId}')">
+          <div class="metric-card full">
+            <span>Saldo pendiente</span>
+            <strong>${money(Math.max(summary.pendiente, 0))}</strong>
+          </div>
+          <label>
+            <span class="field-label">Monto del abono *</span>
+            <input class="field" name="monto" inputmode="decimal" required placeholder="0.00" />
+          </label>
+          <label>
+            <span class="field-label">Nota opcional</span>
+            <textarea class="textarea" name="nota" placeholder="Ej: abonó en efectivo..."></textarea>
+          </label>
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="renderDetalleCliente('${clienteId}')">Cancelar</button>
+            <button class="primary-btn" type="submit">Guardar abono</button>
+          </div>
+        </form>
+      `;
+      resetScroll();
+    }
+
+    async function guardarAbono(event, clienteId) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form));
+      const monto = parseAmount(data.monto);
+      const nota = cleanText(data.nota);
+      const summary = getClienteSummary(clienteId);
+
+      if (!isValidMoney(monto)) return showToast('Escribe un monto válido.', 'warning');
+      if (monto > summary.pendiente && summary.pendiente > 0) {
+        const ok = confirm(`El abono ${money(monto)} es mayor al saldo ${money(summary.pendiente)}. ¿Deseas guardarlo de todos modos?`);
+        if (!ok) return;
+      }
+
+      setLoading(true, 'Guardando abono...');
+      try {
+        const { error } = await db.from('abonos').insert({
+          cliente_id: clienteId,
+          monto,
+          nota: nota || null
+        });
+        throwIfError(error);
+
+        await loadData(false);
+        const newSummary = getClienteSummary(clienteId);
+        if (newSummary.pendiente <= 0) {
+          showToast('Cliente pagado completamente. 🎉', 'success', 4200);
+        } else {
+          showToast('Abono guardado correctamente. ✅', 'success');
+        }
+        renderDetalleCliente(clienteId);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo guardar el abono.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderEditarCliente(clienteId) {
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) return renderClientes();
+      state.view = 'editarCliente';
+      setActiveNav('clientes');
+      screen.innerHTML = `
+        ${renderShell('Editar cliente', 'Actualiza el nombre del cliente.')}
+        <form class="card form-grid" onsubmit="guardarEdicionCliente(event, '${clienteId}')">
+          <label>
+            <span class="field-label">Nombre *</span>
+            <input class="field" name="nombre" required value="${escapeAttr(cliente.nombre)}" />
+          </label>
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="renderDetalleCliente('${clienteId}')">Cancelar</button>
+            <button class="primary-btn" type="submit">Guardar</button>
+          </div>
+        </form>
+      `;
+      resetScroll();
+    }
+
+    async function guardarEdicionCliente(event, clienteId) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+      const data = Object.fromEntries(new FormData(event.currentTarget));
+      const nombre = cleanText(data.nombre);
+      if (!nombre) return showToast('El nombre no puede estar vacío.', 'warning');
+
+      setLoading(true, 'Actualizando cliente...');
+      try {
+        const { error } = await db.from('clientes').update({
+          nombre
+        }).eq('id', clienteId);
+        throwIfError(error);
+        showToast('Cliente actualizado. ✅', 'success');
+        await loadData(false);
+        renderDetalleCliente(clienteId);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo actualizar el cliente.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderEditarCredito(creditoId) {
+      const credito = state.creditos.find(c => c.id === creditoId);
+      if (!credito) return renderDetalleCliente(state.selectedClienteId);
+      state.view = 'editarCredito';
+      setActiveNav('clientes');
+      screen.innerHTML = `
+        ${renderShell('Editar crédito', 'Actualiza solo el monto.')}
+        <form class="card form-grid" onsubmit="guardarEdicionCredito(event, '${creditoId}')">
+          <label>
+            <span class="field-label">Monto *</span>
+            <input class="field" name="monto" inputmode="decimal" required value="${escapeAttr(String(credito.monto))}" />
+          </label>
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="renderDetalleCliente('${credito.cliente_id}')">Cancelar</button>
+            <button class="primary-btn" type="submit">Guardar</button>
+          </div>
+        </form>
+      `;
+      resetScroll();
+    }
+
+    async function guardarEdicionCredito(event, creditoId) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+      const credito = state.creditos.find(c => c.id === creditoId);
+      if (!credito) return;
+      const data = Object.fromEntries(new FormData(event.currentTarget));
+      const monto = parseAmount(data.monto);
+      if (!isValidMoney(monto)) return showToast('Escribe un monto válido.', 'warning');
+
+      setLoading(true, 'Actualizando crédito...');
+      try {
+        const { error } = await db.from('creditos').update({
+          monto
+        }).eq('id', creditoId);
+        throwIfError(error);
+        showToast('Crédito actualizado. ✅', 'success');
+        await loadData(false);
+        renderDetalleCliente(credito.cliente_id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo actualizar el crédito.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderEditarAbono(abonoId) {
+      const abono = state.abonos.find(a => a.id === abonoId);
+      if (!abono) return renderDetalleCliente(state.selectedClienteId);
+      state.view = 'editarAbono';
+      setActiveNav('clientes');
+      screen.innerHTML = `
+        ${renderShell('Editar abono', 'Actualiza monto o nota.')}
+        <form class="card form-grid" onsubmit="guardarEdicionAbono(event, '${abonoId}')">
+          <label>
+            <span class="field-label">Monto *</span>
+            <input class="field" name="monto" inputmode="decimal" required value="${escapeAttr(String(abono.monto))}" />
+          </label>
+          <label>
+            <span class="field-label">Nota</span>
+            <textarea class="textarea" name="nota">${escapeHTML(abono.nota || '')}</textarea>
+          </label>
+          <div class="form-actions">
+            <button class="ghost-btn" type="button" onclick="renderDetalleCliente('${abono.cliente_id}')">Cancelar</button>
+            <button class="primary-btn" type="submit">Guardar</button>
+          </div>
+        </form>
+      `;
+      resetScroll();
+    }
+
+    async function guardarEdicionAbono(event, abonoId) {
+      event.preventDefault();
+      if (!ensureOnlineAndReady()) return;
+      const abono = state.abonos.find(a => a.id === abonoId);
+      if (!abono) return;
+      const data = Object.fromEntries(new FormData(event.currentTarget));
+      const monto = parseAmount(data.monto);
+      if (!isValidMoney(monto)) return showToast('Escribe un monto válido.', 'warning');
+
+      const summary = getClienteSummary(abono.cliente_id);
+      const maxWithoutConfirm = summary.pendiente + Number(abono.monto || 0);
+      if (monto > maxWithoutConfirm && maxWithoutConfirm > 0) {
+        const ok = confirm(`El nuevo abono ${money(monto)} supera el saldo disponible ${money(maxWithoutConfirm)}. ¿Deseas guardarlo?`);
+        if (!ok) return;
+      }
+
+      setLoading(true, 'Actualizando abono...');
+      try {
+        const { error } = await db.from('abonos').update({
+          monto,
+          nota: cleanText(data.nota) || null
+        }).eq('id', abonoId);
+        throwIfError(error);
+        showToast('Abono actualizado. ✅', 'success');
+        await loadData(false);
+        renderDetalleCliente(abono.cliente_id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo actualizar el abono.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function eliminarCliente(clienteId) {
+      if (!ensureOnlineAndReady()) return;
+      const cliente = state.clientes.find(c => c.id === clienteId);
+      if (!cliente) return;
+      const ok = confirm(`¿Eliminar a ${cliente.nombre}? También se eliminarán sus créditos y abonos.`);
+      if (!ok) return;
+
+      setLoading(true, 'Eliminando cliente...');
+      try {
+        const { error } = await db.from('clientes').delete().eq('id', clienteId);
+        throwIfError(error);
+        showToast('Cliente eliminado.', 'success');
+        await loadData(false);
+        renderClientes();
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo eliminar el cliente.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function eliminarCredito(creditoId) {
+      if (!ensureOnlineAndReady()) return;
+      const credito = state.creditos.find(c => c.id === creditoId);
+      if (!credito) return;
+      const ok = confirm('¿Eliminar este crédito? El saldo se actualizará automáticamente.');
+      if (!ok) return;
+
+      setLoading(true, 'Eliminando crédito...');
+      try {
+        const { error } = await db.from('creditos').delete().eq('id', creditoId);
+        throwIfError(error);
+        showToast('Crédito eliminado.', 'success');
+        await loadData(false);
+        renderDetalleCliente(credito.cliente_id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo eliminar el crédito.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function eliminarAbono(abonoId) {
+      if (!ensureOnlineAndReady()) return;
+      const abono = state.abonos.find(a => a.id === abonoId);
+      if (!abono) return;
+      const ok = confirm('¿Eliminar este abono? El saldo regresará automáticamente.');
+      if (!ok) return;
+
+      setLoading(true, 'Eliminando abono...');
+      try {
+        const { error } = await db.from('abonos').delete().eq('id', abonoId);
+        throwIfError(error);
+        showToast('Abono eliminado.', 'success');
+        await loadData(false);
+        renderDetalleCliente(abono.cliente_id);
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo eliminar el abono.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderResumen(scroll = true) {
+      state.view = 'resumen';
+      setActiveNav('resumen');
+
+      const totals = calculateTotals();
+      const totalCartera = Math.max(Number(totals.totalPrestado || 0), 0);
+      const abonadoPct = totalCartera > 0
+        ? Math.min(100, Math.max(0, (Number(totals.totalAbonado || 0) / totalCartera) * 100))
+        : 0;
+
+      const totalClientesConCredito = Math.max(Number(totals.clientesConDeuda || 0) + Number(totals.clientesPagados || 0), 0);
+      const pagadosPct = totalClientesConCredito > 0
+        ? Math.min(100, Math.max(0, (Number(totals.clientesPagados || 0) / totalClientesConCredito) * 100))
+        : 0;
+
+      const carteraGradient = totalCartera > 0
+        ? `conic-gradient(var(--success) 0 ${abonadoPct.toFixed(2)}%, var(--warning) ${abonadoPct.toFixed(2)}% 100%)`
+        : 'conic-gradient(#e8eaf2 0 100%)';
+
+      const clientesGradient = totalClientesConCredito > 0
+        ? `conic-gradient(var(--success) 0 ${pagadosPct.toFixed(2)}%, var(--warning) ${pagadosPct.toFixed(2)}% 100%)`
+        : 'conic-gradient(#e8eaf2 0 100%)';
+
+      screen.innerHTML = `
+        ${renderShell('Resumen', 'Gráficas de dona.')}
+
+        <section class="donut-dashboard">
+          <article class="card donut-card">
+            <h3>Cartera</h3>
+            <div class="donut-chart" style="background:${carteraGradient};" role="img" aria-label="Gráfica de dona de cartera">
+              <div class="donut-center">💳</div>
+            </div>
+            <div class="donut-legend">
+              <span><i class="legend-dot success"></i>Cobrado</span>
+              <span><i class="legend-dot warning"></i>Pendiente</span>
+            </div>
+          </article>
+
+          <article class="card donut-card">
+            <h3>Clientes</h3>
+            <div class="donut-chart" style="background:${clientesGradient};" role="img" aria-label="Gráfica de dona de clientes">
+              <div class="donut-center">👥</div>
+            </div>
+            <div class="donut-legend">
+              <span><i class="legend-dot success"></i>Pagados</span>
+              <span><i class="legend-dot warning"></i>Con deuda</span>
+            </div>
+          </article>
+        </section>
+      `;
+      if (scroll) resetScroll();
+    }
+
+    function calculateTotals() {
+      let totalPrestado = 0;
+      let totalAbonado = 0;
+      let totalPendiente = 0;
+      let clientesConDeuda = 0;
+      let clientesPagados = 0;
+      let abonadoHoy = 0;
+      let abonadoMes = 0;
+      let creditosMes = 0;
+      const today = new Date();
+
+      state.clientes.forEach(cliente => {
+        const summary = getClienteSummary(cliente.id);
+        totalPrestado += summary.creditos;
+        totalAbonado += summary.abonos;
+        totalPendiente += Math.max(summary.pendiente, 0);
+        if (summary.creditos > 0) {
+          if (summary.pendiente > 0) clientesConDeuda += 1;
+          else clientesPagados += 1;
+        }
+      });
+
+      state.abonos.forEach(abono => {
+        const monto = Number(abono.monto || 0);
+        if (isSameDay(abono.fecha, today)) abonadoHoy += monto;
+        if (isSameMonth(abono.fecha, today)) abonadoMes += monto;
+      });
+
+      state.creditos.forEach(credito => {
+        if (isSameMonth(credito.fecha, today)) creditosMes += Number(credito.monto || 0);
+      });
+
+      const promedioPendiente = clientesConDeuda ? totalPendiente / clientesConDeuda : 0;
+
+      return {
+        totalPrestado,
+        totalAbonado,
+        totalPendiente,
+        clientesConDeuda,
+        clientesPagados,
+        abonadoHoy,
+        abonadoMes,
+        creditosMes,
+        promedioPendiente
+      };
+    }
+
+    function getTopClientesPendientes(limit = 5) {
+      return state.clientes
+        .map(cliente => ({ cliente, summary: getClienteSummary(cliente.id) }))
+        .filter(item => item.summary.pendiente > 0)
+        .sort((a, b) => b.summary.pendiente - a.summary.pendiente || a.cliente.nombre.localeCompare(b.cliente.nombre, 'es'))
+        .slice(0, limit);
+    }
+
+    function renderClientePendienteDashboard(item) {
+      return `
+        <button class="dashboard-client-row" type="button" onclick="renderDetalleCliente('${item.cliente.id}')">
+          <span>
+            <strong>${escapeHTML(item.cliente.nombre)}</strong>
+            <span>Saldo pendiente</span>
+          </span>
+          <em class="dashboard-amount">${money(Math.max(item.summary.pendiente, 0))}</em>
+        </button>
+      `;
+    }
+
+    function getAbonosRecientes(limit = 5) {
+      return state.abonos
+        .slice()
+        .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))
+        .slice(0, limit);
+    }
+
+    function renderAbonosRecientesTable(abonos) {
+      return `
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${abonos.map(renderAbonoRecienteRow).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderAbonoRecienteRow(abono) {
+      const cliente = state.clientes.find(c => c.id === abono.cliente_id);
+      return `
+        <tr>
+          <td>${cliente ? escapeHTML(cliente.nombre) : 'Cliente eliminado'}</td>
+          <td class="amount-cell">${money(Number(abono.monto))}</td>
+          <td>${formatDate(abono.fecha)}</td>
+        </tr>
+      `;
+    }
+
+    function isSameDay(value, reference = new Date()) {
+      if (!value) return false;
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return false;
+      return date.getFullYear() === reference.getFullYear() &&
+        date.getMonth() === reference.getMonth() &&
+        date.getDate() === reference.getDate();
+    }
+
+    function isSameMonth(value, reference = new Date()) {
+      if (!value) return false;
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return false;
+      return date.getFullYear() === reference.getFullYear() &&
+        date.getMonth() === reference.getMonth();
+    }
+
+    function getClienteSummary(clienteId) {
+      const creditos = state.creditos
+        .filter(c => c.cliente_id === clienteId)
+        .reduce((sum, c) => sum + Number(c.monto || 0), 0);
+      const abonos = state.abonos
+        .filter(a => a.cliente_id === clienteId)
+        .reduce((sum, a) => sum + Number(a.monto || 0), 0);
+      return { creditos, abonos, pendiente: creditos - abonos };
+    }
+
+    function exportarJSON() {
+      const backup = {
+        app: 'Cartera de Creditos',
+        version: 1,
+        exportado_en: new Date().toISOString(),
+        clientes: state.clientes,
+        creditos: state.creditos,
+        abonos: state.abonos
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `respaldo-creditos-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Respaldo exportado. ✅', 'success');
+    }
+
+    importFile.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        await importarJSON(json);
+      } catch (error) {
+        console.error(error);
+        showToast('El archivo JSON no es válido.', 'error');
+      } finally {
+        importFile.value = '';
+      }
+    });
+
+    function pickFields(row, fields) {
+      return fields.reduce((clean, field) => {
+        if (Object.prototype.hasOwnProperty.call(row, field)) clean[field] = row[field];
+        return clean;
+      }, {});
+    }
+
+    async function importarJSON(json) {
+      if (!ensureOnlineAndReady()) return;
+      if (!Array.isArray(json.clientes) || !Array.isArray(json.creditos) || !Array.isArray(json.abonos)) {
+        return showToast('El respaldo debe tener clientes, creditos y abonos.', 'warning');
+      }
+      const ok = confirm('¿Importar este respaldo? Los registros con el mismo ID se actualizarán.');
+      if (!ok) return;
+
+      const clientesLimpios = json.clientes.map(row => pickFields(row, ['id', 'nombre']));
+      const creditosLimpios = json.creditos.map(row => pickFields(row, ['id', 'cliente_id', 'monto', 'fecha']));
+      const abonosLimpios = json.abonos.map(row => pickFields(row, ['id', 'cliente_id', 'monto', 'nota', 'fecha']));
+
+      setLoading(true, 'Importando respaldo...');
+      try {
+        if (clientesLimpios.length) {
+          const { error } = await db.from('clientes').upsert(clientesLimpios, { onConflict: 'id' });
+          throwIfError(error);
+        }
+        if (creditosLimpios.length) {
+          const { error } = await db.from('creditos').upsert(creditosLimpios, { onConflict: 'id' });
+          throwIfError(error);
+        }
+        if (abonosLimpios.length) {
+          const { error } = await db.from('abonos').upsert(abonosLimpios, { onConflict: 'id' });
+          throwIfError(error);
+        }
+        showToast('Respaldo importado correctamente. ✅', 'success');
+        await loadData(false);
+        renderResumen();
+      } catch (error) {
+        console.error(error);
+        showToast(error.message || 'No se pudo importar el respaldo.', 'error', 5200);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function ensureOnlineAndReady() {
+      if (!navigator.onLine) {
+        showToast('Sin internet: necesitas conexión para guardar en Supabase.', 'warning');
+        return false;
+      }
+      if (!db) {
+        showToast('Configura primero Supabase en el index.html.', 'warning');
+        return false;
+      }
+      return true;
+    }
+
+    function showToast(message, type = '', time = 3000) {
+      const toast = $('#toast');
+      toast.textContent = message;
+      toast.className = `toast show ${type}`.trim();
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => {
+        toast.className = 'toast';
+      }, time);
+    }
+
+    function parseAmount(value) {
+      if (typeof value !== 'string') return Number(value);
+      const cleaned = value.replace(/\s/g, '').replace(',', '.').replace(/[^0-9.]/g, '');
+      const parts = cleaned.split('.');
+      const normalized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : cleaned;
+      return Number(normalized);
+    }
+
+    function isValidMoney(value) {
+      return Number.isFinite(value) && value > 0;
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat('es-PA', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      }).format(Number(value || 0));
+    }
+
+    function formatDate(value) {
+      if (!value) return 'Sin fecha';
+      return new Intl.DateTimeFormat('es-PA', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(new Date(value));
+    }
+
+    function cleanText(value) {
+      return String(value || '').trim().replace(/\s+/g, ' ');
+    }
+
+    function normalizeText(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value).replaceAll('`', '&#096;');
+    }
+  </script>
+</body>
+</html>
