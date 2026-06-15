@@ -28,6 +28,7 @@
       --shadow: 0 12px 35px rgba(40, 45, 70, .10);
       --radius: 22px;
       --bottom-nav-height: 76px;
+      --keyboard-offset: 0px;
     }
 
     * {
@@ -48,6 +49,12 @@
 
     body {
       min-height: 100dvh;
+    }
+
+    body.keyboard-open .bottom-nav {
+      transform: translateY(calc(100% + env(safe-area-inset-bottom)));
+      opacity: 0;
+      pointer-events: none;
     }
 
     button,
@@ -139,7 +146,8 @@
       overflow-y: auto;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
-      padding: 0 12px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 18px);
+      padding: 0 12px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--keyboard-offset) + 18px);
+      scroll-padding-bottom: calc(140px + var(--keyboard-offset));
     }
 
     .screen {
@@ -389,6 +397,7 @@
     .textarea {
       width: 100%;
       min-height: 56px;
+      scroll-margin-block: 120px;
       border: 1px solid var(--line);
       outline: 0;
       border-radius: 16px;
@@ -881,6 +890,7 @@
       padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
       background: linear-gradient(135deg, #5b48ff, #6d3df5);
       box-shadow: 0 -12px 30px rgba(109, 61, 245, .28);
+      transition: transform .22s ease, opacity .22s ease;
     }
 
     .nav-inner {
@@ -1126,8 +1136,8 @@
     }
 
     .progress-meta strong {
-      font-size: 18px;
-      letter-spacing: -.03em;
+      font-size: clamp(13px, 3.4vw, 15px);
+      letter-spacing: -.02em;
     }
 
     .dashboard-list {
@@ -1250,6 +1260,347 @@
 
     .legend-dot.success { background: var(--success); }
     .legend-dot.warning { background: var(--warning); }
+
+
+    .donut-center {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .donut-center strong {
+      display: block;
+      max-width: 100%;
+      font-size: clamp(20px, 6vw, 30px);
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      white-space: nowrap;
+    }
+
+    .donut-center span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .donut-legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .donut-legend-item {
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      text-align: left;
+      border-radius: 18px;
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+    }
+
+    .donut-legend-item small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .donut-legend-item strong {
+      display: block;
+      margin-top: 4px;
+      overflow: hidden;
+      color: var(--text);
+      font-size: clamp(11px, 3.2vw, 14px);
+      line-height: 1.1;
+      letter-spacing: -.03em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .donut-total-line {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: var(--primary-soft);
+      border: 1px solid #e5dbff;
+    }
+
+    .donut-total-line span {
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .donut-total-line strong {
+      color: var(--primary);
+      font-size: 18px;
+      letter-spacing: -.03em;
+      white-space: nowrap;
+    }
+
+    /* Diseño final de la leyenda de la gráfica */
+    .donut-card {
+      overflow: hidden;
+    }
+
+    .donut-card h3 {
+      font-size: clamp(17px, 4.8vw, 20px);
+      text-align: center;
+    }
+
+    .donut-center strong {
+      font-size: clamp(21px, 6vw, 28px);
+    }
+
+    .donut-center span {
+      font-size: 10px;
+    }
+
+    .donut-legend {
+      width: 100%;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .donut-legend-item {
+      width: 100%;
+      min-width: 0;
+      min-height: 68px;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 9px;
+      padding: 10px 11px;
+      border-radius: 18px;
+    }
+
+    .donut-legend-item > span {
+      min-width: 0;
+      min-height: 0;
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+    }
+
+    .donut-legend-item small {
+      display: block;
+      overflow: visible;
+      color: var(--muted);
+      font-size: clamp(9px, 2.7vw, 11px);
+      line-height: 1.1;
+      white-space: normal;
+    }
+
+    .donut-legend-item strong {
+      display: block;
+      margin-top: 5px;
+      overflow: visible;
+      color: var(--text);
+      font-size: clamp(12px, 3.5vw, 15px);
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 380px) {
+      .donut-card {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .donut-legend {
+        gap: 8px;
+      }
+
+      .donut-legend-item {
+        min-height: 64px;
+        grid-template-columns: 10px minmax(0, 1fr);
+        gap: 7px;
+        padding: 9px 8px;
+      }
+
+      .donut-legend-item .legend-dot {
+        width: 10px;
+        height: 10px;
+      }
+
+      .donut-legend-item strong {
+        font-size: 12px;
+      }
+    }
+
+    .summary-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-info-card {
+      min-height: 92px;
+      display: grid;
+      align-content: space-between;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(31, 41, 55, .06);
+    }
+
+    .summary-info-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1.25;
+    }
+
+    .summary-info-card strong {
+      display: block;
+      font-size: clamp(16px, 4.4vw, 21px);
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+
+    .chart-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .chart-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .chart-card-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -.025em;
+    }
+
+    .chart-card-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .month-bars,
+    .debt-chart {
+      display: grid;
+      gap: 13px;
+    }
+
+    .bar-row,
+    .debt-chart-row {
+      display: grid;
+      gap: 7px;
+    }
+
+    .bar-row-head,
+    .debt-chart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .bar-row-head strong,
+    .debt-chart-head strong {
+      font-size: 14px;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+    }
+
+    .chart-track {
+      width: 100%;
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eceef6;
+      border: 1px solid #e2e5ef;
+    }
+
+    .chart-fill {
+      height: 100%;
+      min-width: 0;
+      border-radius: inherit;
+      transition: width .25s ease;
+    }
+
+    .chart-fill.credit { background: linear-gradient(135deg, #5b48ff, #962bf5); }
+    .chart-fill.payment { background: linear-gradient(135deg, var(--success), #34d399); }
+    .chart-fill.debt { background: linear-gradient(135deg, var(--warning), #fbbf24); }
+
+    .chart-insight {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: #343948;
+      background: #f7f8fc;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
+    .debt-chart-row {
+      width: 100%;
+      padding: 10px 0;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .debt-chart-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .debt-chart-head span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 720px) {
+      .donut-dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .summary-info-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 390px) {
+      .donut-legend {
+        grid-template-columns: 1fr;
+      }
+    }
 
     @media (min-width: 720px) {
       .dashboard-kpi-grid {
@@ -1377,7 +1728,7 @@
   <input class="file-input" id="importFile" type="file" accept="application/json,.json" />
 
   <script>
-    const APP_BUILD = 'dashboard-util-2026-06-11-v1';
+    const APP_BUILD = 'dashboard-util-2026-06-15-v2';
     /********************************************************************
      * CONFIGURACIÓN SUPABASE
      * 1) Entra a Supabase > Project Settings > API.
@@ -1415,6 +1766,7 @@
       setupPWA();
       setupNavigation();
       setupNetworkListeners();
+      setupKeyboardHandling();
       renderMenu();
 
       if (!validConfig()) {
@@ -1477,6 +1829,68 @@
       });
       window.addEventListener('offline', updateOnline);
       updateOnline();
+    }
+
+    function setupKeyboardHandling() {
+      const root = document.documentElement;
+      const hasVisualViewport = Boolean(window.visualViewport);
+
+      const isEditableField = (el) => {
+        if (!el || !el.tagName) return false;
+        const tag = el.tagName.toUpperCase();
+        return (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') && !el.readOnly && !el.disabled;
+      };
+
+      const keepFieldVisible = (el) => {
+        if (!isEditableField(el)) return;
+        requestAnimationFrame(() => {
+          try {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+          } catch (error) {
+            try {
+              el.scrollIntoView();
+            } catch (_) {}
+          }
+        });
+      };
+
+      const updateKeyboardInset = () => {
+        let keyboardOffset = 0;
+        if (hasVisualViewport) {
+          const viewport = window.visualViewport;
+          const diff = window.innerHeight - viewport.height - viewport.offsetTop;
+          keyboardOffset = diff > 120 ? diff : 0;
+        }
+
+        root.style.setProperty('--keyboard-offset', `${Math.max(0, Math.round(keyboardOffset))}px`);
+        const activeField = document.activeElement;
+        const keyboardOpen = keyboardOffset > 0 && isEditableField(activeField);
+        document.body.classList.toggle('keyboard-open', keyboardOpen);
+
+        if (keyboardOpen) {
+          keepFieldVisible(activeField);
+        }
+      };
+
+      document.addEventListener('focusin', (event) => {
+        if (!isEditableField(event.target)) return;
+        setTimeout(() => {
+          keepFieldVisible(event.target);
+          updateKeyboardInset();
+        }, 240);
+      });
+
+      document.addEventListener('focusout', () => {
+        setTimeout(updateKeyboardInset, 120);
+      });
+
+      if (hasVisualViewport) {
+        window.visualViewport.addEventListener('resize', updateKeyboardInset);
+        window.visualViewport.addEventListener('scroll', updateKeyboardInset);
+      }
+
+      window.addEventListener('resize', updateKeyboardInset);
+      updateKeyboardInset();
     }
 
     async function loadData(showConnecting = false) {
@@ -2390,50 +2804,93 @@
       setActiveNav('resumen');
 
       const totals = calculateTotals();
-      const totalCartera = Math.max(Number(totals.totalPrestado || 0), 0);
-      const abonadoPct = totalCartera > 0
-        ? Math.min(100, Math.max(0, (Number(totals.totalAbonado || 0) / totalCartera) * 100))
-        : 0;
+      const totalOtorgado = Math.max(Number(totals.totalPrestado || 0), 0);
+      const totalPagado = Math.max(Number(totals.totalAbonado || 0), 0);
+      const totalPendiente = Math.max(Number(totals.totalPendiente || 0), 0);
+      const clientesPagados = Math.max(Number(totals.clientesPagados || 0), 0);
+      const clientesConDeuda = Math.max(Number(totals.clientesConDeuda || 0), 0);
 
-      const totalClientesConCredito = Math.max(Number(totals.clientesConDeuda || 0) + Number(totals.clientesPagados || 0), 0);
-      const pagadosPct = totalClientesConCredito > 0
-        ? Math.min(100, Math.max(0, (Number(totals.clientesPagados || 0) / totalClientesConCredito) * 100))
-        : 0;
+      const baseTotal = totalOtorgado + totalPagado;
+      const otorgadoPct = baseTotal > 0
+        ? Math.min(100, Math.max(0, (totalOtorgado / baseTotal) * 100))
+        : 50;
 
-      const carteraGradient = totalCartera > 0
-        ? `conic-gradient(var(--success) 0 ${abonadoPct.toFixed(2)}%, var(--warning) ${abonadoPct.toFixed(2)}% 100%)`
+      const carteraGradient = baseTotal > 0
+        ? `conic-gradient(var(--primary) 0 ${otorgadoPct.toFixed(2)}%, var(--success) ${otorgadoPct.toFixed(2)}% 100%)`
         : 'conic-gradient(#e8eaf2 0 100%)';
 
-      const clientesGradient = totalClientesConCredito > 0
-        ? `conic-gradient(var(--success) 0 ${pagadosPct.toFixed(2)}%, var(--warning) ${pagadosPct.toFixed(2)}% 100%)`
-        : 'conic-gradient(#e8eaf2 0 100%)';
+      const topPendientes = getTopClientesPendientes(5);
+      const maxPendienteCliente = Math.max(...topPendientes.map(item => Number(item.summary.pendiente || 0)), 1);
+      const topPendientesHTML = topPendientes.length
+        ? topPendientes.map(item => {
+            const pendiente = Math.max(Number(item.summary.pendiente || 0), 0);
+            const width = Math.max(3, (pendiente / maxPendienteCliente) * 100);
+            return `
+              <button class="debt-chart-row" type="button" onclick="renderDetalleCliente('${item.cliente.id}')">
+                <span class="debt-chart-head">
+                  <span>${escapeHTML(item.cliente.nombre)}</span>
+                  <strong>${money(pendiente)}</strong>
+                </span>
+                <span class="chart-track"><span class="chart-fill debt" style="width:${width.toFixed(2)}%"></span></span>
+              </button>
+            `;
+          }).join('')
+        : '<div class="empty">No hay clientes con saldo pendiente. 🎉</div>';
 
       screen.innerHTML = `
-        ${renderShell('Resumen', 'Gráficas de dona.')}
+        ${renderShell('Resumen', 'Gráfico de dona limpio y valores pequeños debajo, con mayores saldos pendientes.')}
 
-        <section class="donut-dashboard">
-          <article class="card donut-card">
-            <h3>Cartera</h3>
-            <div class="donut-chart" style="background:${carteraGradient};" role="img" aria-label="Gráfica de dona de cartera">
-              <div class="donut-center">💳</div>
-            </div>
-            <div class="donut-legend">
-              <span><i class="legend-dot success"></i>Cobrado</span>
-              <span><i class="legend-dot warning"></i>Pendiente</span>
-            </div>
+        <section class="summary-info-grid" aria-label="Indicadores principales">
+          <article class="summary-info-card">
+            <span>Total otorgado</span>
+            <strong>${money(totalOtorgado)}</strong>
           </article>
+          <article class="summary-info-card">
+            <span>Total pagado</span>
+            <strong>${money(totalPagado)}</strong>
+          </article>
+          <article class="summary-info-card">
+            <span>Saldo pendiente</span>
+            <strong>${money(totalPendiente)}</strong>
+          </article>
+          <article class="summary-info-card">
+            <span>Clientes con deuda</span>
+            <strong>${clientesConDeuda}</strong>
+          </article>
+        </section>
 
+        <section class="donut-dashboard" style="margin-top:14px;">
           <article class="card donut-card">
-            <h3>Clientes</h3>
-            <div class="donut-chart" style="background:${clientesGradient};" role="img" aria-label="Gráfica de dona de clientes">
-              <div class="donut-center">👥</div>
+            <h3>Total otorgado vs total pagado</h3>
+            <div class="donut-chart" style="background:${carteraGradient};" role="img" aria-label="Comparación entre total otorgado ${money(totalOtorgado)} y total pagado ${money(totalPagado)}">
+              <div class="donut-center">
+                <strong>Totales</strong>
+                <span>Ver abajo</span>
+              </div>
             </div>
             <div class="donut-legend">
-              <span><i class="legend-dot success"></i>Pagados</span>
-              <span><i class="legend-dot warning"></i>Con deuda</span>
+              <div class="donut-legend-item">
+                <i class="legend-dot" style="background: var(--primary);"></i>
+                <span><small>Total otorgado</small><strong>${money(totalOtorgado)}</strong></span>
+              </div>
+              <div class="donut-legend-item">
+                <i class="legend-dot success"></i>
+                <span><small>Total pagado</small><strong>${money(totalPagado)}</strong></span>
+              </div>
             </div>
           </article>
         </section>
+
+        <article class="card chart-card">
+          <div class="chart-card-head">
+            <div>
+              <h3>Mayores saldos pendientes</h3>
+              <p>Clientes que requieren mayor seguimiento. Toca uno para abrir su detalle.</p>
+            </div>
+            <span class="small-chip">Top 5</span>
+          </div>
+          <div class="debt-chart">${topPendientesHTML}</div>
+        </article>
       `;
       if (scroll) resetScroll();
     }
